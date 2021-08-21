@@ -3,4 +3,10 @@
 
     <string name="likes">Likes</string>
 
+
+
+    <!-- Content Descriptions -->
+
+    <string name="delete">Delete Review</string>
+
 </resources>
