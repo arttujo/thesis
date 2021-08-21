@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">RatingsApp</string>
 
-    <string name="likes">Likes</string>
 
+    <string name="my_reviews">My Reviews</string>
+
+    <string name="likes">Likes</string>
+    <string name="review_by">By: %1$s</string>
 
 
     <!-- Content Descriptions -->
