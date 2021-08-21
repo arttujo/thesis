@@ -8,7 +8,7 @@ data class Review(
     val title: String,
     val authorUsername: String,
     val body: String,
-    val reviewScore: Double,
+    val reviewScore: Int,
     val likes: Int )
 
 data class Game(

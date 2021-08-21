@@ -8,5 +8,6 @@
     <!-- Content Descriptions -->
 
     <string name="delete">Delete Review</string>
+    <string name="star">Review Star</string>
 
 </resources>

@@ -14,7 +14,9 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,13 +45,6 @@ fun Greeting(name: String) {
     Text(text = "Hello $name!")
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    RatingsAppTheme {
-        Greeting("Android")
-    }
-}
 
 @PreviewParameter(ReviewProvider::class)
 @Composable
@@ -57,7 +52,8 @@ fun ReviewRow(review: Review, isDelete: Boolean = false, onClick: () -> Unit , o
     val deleteWeight = if (isDelete) 0.85F else 1F //
     Row(
         modifier = Modifier
-            .height(80.dp).fillMaxWidth(),
+            .height(80.dp)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
 
     ) {
@@ -67,13 +63,29 @@ fun ReviewRow(review: Review, isDelete: Boolean = false, onClick: () -> Unit , o
             modifier = Modifier.weight(deleteWeight)
         ) {
             ConstraintLayout(modifier = Modifier.fillMaxHeight()) {
-                val (likes) = createRefs()
-                Text(text = review.authorUsername, style = MaterialTheme.typography.h5, modifier = Modifier.padding(start = 8.dp,top = 4.dp))
+                val (stars,author,likes) = createRefs()
+                Text(
+                    text = review.authorUsername,
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier
+                        .padding(start = 8.dp, top = 4.dp)
+                        .constrainAs(author) {
+                            start.linkTo(parent.start)
+                            top.linkTo(parent.top)
+                        })
                 Likes(likes = review.likes, modifier = Modifier.constrainAs(likes) {
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 })
+
+                StaticRating(
+                    score = review.reviewScore,
+                    modifier = Modifier.constrainAs(stars){
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        top.linkTo(author.bottom)
+                }.padding(start = 8.dp))
 
             }
         }
@@ -82,12 +94,34 @@ fun ReviewRow(review: Review, isDelete: Boolean = false, onClick: () -> Unit , o
 }
 
 /**
- * Stars for the review rows
+ * Stating rating bar that shows the review score in stars
  */
-
 @Composable
-fun ReviewStats(){
+fun StaticRating(score: Int, modifier: Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically, 
+        horizontalArrangement = Arrangement.Center){
+        for (i in 1..5) {
 
+            val iconMod = Modifier.width(40.dp).height(40.dp)
+            if (i<=score) {
+                Icon(
+                    modifier = iconMod,
+                    painter = painterResource(id = R.drawable.ic_star),
+                    contentDescription = stringResource(id = R.string.star),
+                    tint = Color.Black
+                    )
+            } else {
+                Icon(
+                    modifier = iconMod,
+                    painter = painterResource(id = R.drawable.ic_star),
+                    contentDescription = stringResource(id = R.string.star),
+                    tint = Color.LightGray
+                    )
+            }
+        }
+    }
 }
 
 /**
@@ -99,7 +133,7 @@ fun Likes(likes: Int, modifier: Modifier) {
         modifier = modifier.padding(8.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = likes.toString(), style = MaterialTheme.typography.body1 )
+        Text(text = likes.toString(), style = MaterialTheme.typography.h5)
         Text(text = stringResource(id = R.string.likes), style = MaterialTheme.typography.body1 )  }
 }
 
@@ -110,7 +144,8 @@ fun Likes(likes: Int, modifier: Modifier) {
 fun DeleteButton(onClick: () -> Unit, modifier: Modifier) {
     Box(modifier = modifier
         .height(40.dp)
-        .width(40.dp).clickable { onClick() })
+        .width(40.dp)
+        .clickable { onClick() })
     {
         Image(
             Icons.Rounded.Delete,
@@ -133,7 +168,7 @@ fun PreviewRow(@PreviewParameter(ReviewProvider::class) review: Review)  {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewDeleteRow(@PreviewParameter(ReviewProvider::class) review: Review) {
     RatingsAppTheme {
