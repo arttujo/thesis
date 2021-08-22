@@ -2,6 +2,10 @@
     <string name="app_name">RatingsApp</string>
 
 
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="profile">Profile</string>
+
     <string name="my_reviews">My Reviews</string>
 
     <string name="likes">Likes</string>
@@ -12,5 +16,9 @@
 
     <string name="delete">Delete Review</string>
     <string name="star">Review Star</string>
+    <string name="logout">Logout from the app</string>
 
+    <string name="home_tab">Home</string>
+    <string name="search_tab">Search</string>
+    <string name="profile_tab">Profile</string>
 </resources>

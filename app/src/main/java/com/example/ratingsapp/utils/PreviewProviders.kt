@@ -1,4 +1,4 @@
-package com.example.ratingsapp
+package com.example.ratingsapp.utils
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.example.ratingsapp.models.Review

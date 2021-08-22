@@ -1,5 +1,6 @@
 package com.example.ratingsapp.components
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,11 +14,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.ratingsapp.R
-import com.example.ratingsapp.ReviewListProvider
+import com.example.ratingsapp.utils.ReviewListProvider
 import com.example.ratingsapp.models.Review
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
-
-
 
 @Composable
 fun ReviewList(reviews: List<Review>, shownInProfile: Boolean, onRowClick: ()->Unit? = {}, onDeleteClick: ()-> Unit? = {}) {

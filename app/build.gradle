@@ -49,12 +49,36 @@ android {
 
 dependencies {
 
+    /**
+     * NAVIGATION
+     */
+    def nav_version = "2.3.5"
+
+    // Kotlin
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+
+    // Feature module Support
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
+
+    implementation "androidx.navigation:navigation-compose:2.4.0-alpha07"
+
+
+    /**
+     * Compose stuff
+     */
 
     implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02'
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
 
+    // Accompanist
+    implementation "com.google.accompanist:accompanist-pager:0.14.0" // Pager
+    implementation "com.google.accompanist:accompanist-pager-indicators:0.14.0" // Pager Indicators
 
+    /**
+     * Other
+     */
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
