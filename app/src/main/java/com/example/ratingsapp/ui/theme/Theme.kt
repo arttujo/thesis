@@ -42,6 +42,6 @@ fun RatingsAppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compos
         colors = colors,
         typography = Typography,
         shapes = Shapes,
-        content = content
+        content = content,
     )
 }

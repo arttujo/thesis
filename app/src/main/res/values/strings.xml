@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">RatingsApp</string>
 
+    <string name="login_title">Login</string>
+    <string name="register_title">Register</string>
 
     <string name="home">Home</string>
     <string name="search">Search</string>
@@ -12,7 +14,11 @@
     <string name="review_by">By: %1$s</string>
 
 
+    <string name="username_hint">Username</string>
+
     <!-- Content Descriptions -->
+
+    <string name="clear_text">Clear Text</string>
 
     <string name="delete">Delete Review</string>
     <string name="star">Review Star</string>
@@ -21,4 +27,12 @@
     <string name="home_tab">Home</string>
     <string name="search_tab">Search</string>
     <string name="profile_tab">Profile</string>
+
+
+
+
+    <!-- other -->
+    <string name="preference_file_key">myPrefsFileKey</string>
+
+
 </resources>

@@ -28,10 +28,30 @@ fun MainTopBar(onLogoutClick: () -> Unit) {
     )
 }
 
+
+
+@Composable
+fun NoActionTopBar() {
+    TopAppBar(
+        title = { Text(text = stringResource(id = R.string.app_name),fontSize = 16.sp) },
+        backgroundColor = MaterialTheme.colors.primary,
+        elevation =0.dp,
+        contentColor = Color.Black,
+    )
+}
+
 @Preview
 @Composable
 fun PreviewTop() {
     RatingsAppTheme {
         MainTopBar(onLogoutClick = {})
+    }
+}
+
+@Preview
+@Composable
+fun NoActionPreview(){
+    RatingsAppTheme {
+        NoActionTopBar()
     }
 }
