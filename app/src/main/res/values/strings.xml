@@ -15,6 +15,9 @@
 
 
     <string name="username_hint">Username</string>
+    <string name="firstname_hint">Firstname</string>
+    <string name="lastname_hint">Lastname</string>
+
 
     <!-- Content Descriptions -->
 
