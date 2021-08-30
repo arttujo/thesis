@@ -19,6 +19,9 @@
     <string name="lastname_hint">Lastname</string>
 
 
+    <string name="data_fetch_error">Fetching Data Failed!</string>
+    <string name="reload">Reload</string>
+
     <!-- Content Descriptions -->
 
     <string name="clear_text">Clear Text</string>

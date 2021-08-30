@@ -39,12 +39,13 @@ fun HomeScreen(mainVm:MainViewModel) {
 
     val games = vm.games.observeAsState()
     val loading = vm.loading.observeAsState()
-
+    val error = vm.error.observeAsState()
 
     ColumnWithDefaultMargin {
         if (loading.value == true) {
             LoadingOverlay()
-        } else {
+        }
+        else {
             HomeGameList(games = games.value?: emptyList())
         }
     }
@@ -56,9 +57,12 @@ fun GameListItem(item: Game){
     Card(
         shape = RoundedCornerShape(10),
         modifier = Modifier
-        .height(250.dp).width(170.dp).padding(4.dp).clickable {
-            //TODO NAVIGATION TO DETAILS
-        }) {
+            .height(250.dp)
+            .width(170.dp)
+            .padding(4.dp)
+            .clickable {
+                //TODO NAVIGATION TO DETAILS
+            }) {
         Image(
             painter = rememberImagePainter(item.imageLink),
             contentDescription = "My content description",
