@@ -10,26 +10,45 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.example.ratingsapp.components.ColumnWithDefaultMargin
+import com.example.ratingsapp.components.LoadingOverlay
 import com.example.ratingsapp.models.Game
 import com.example.ratingsapp.models.Review
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
 import com.example.ratingsapp.utils.GameListProvider
 import com.example.ratingsapp.utils.ReviewProvider
 
+@ExperimentalFoundationApi
+@ExperimentalCoilApi
 @Composable
 fun HomeScreen(mainVm:MainViewModel) {
-    ColumnWithDefaultMargin {
+    val vm: HomeViewModel = viewModel()
+    vm.init(mainVm)
 
+    val games = vm.games.observeAsState()
+    val loading = vm.loading.observeAsState()
+
+
+    ColumnWithDefaultMargin {
+        if (loading.value == true) {
+            LoadingOverlay()
+        } else {
+            HomeGameList(games = games.value?: emptyList())
+        }
     }
 }
 
+@ExperimentalCoilApi
 @Composable
 fun GameListItem(item: Game){
     Card(modifier = Modifier
@@ -41,6 +60,7 @@ fun GameListItem(item: Game){
         )
     }
 }
+@ExperimentalCoilApi
 @Preview
 @Composable
 fun itemPreview(@PreviewParameter(GameListProvider::class) games: List<Game>){
@@ -51,6 +71,7 @@ fun itemPreview(@PreviewParameter(GameListProvider::class) games: List<Game>){
 }
 
 
+@ExperimentalCoilApi
 @ExperimentalFoundationApi
 @Composable
 fun HomeGameList(games: List<Game>){
@@ -69,5 +90,18 @@ class HomeViewModel:ViewModel(){
     fun init(mainViewModel: MainViewModel) {
         this.mainViewModel = mainViewModel
     }
+
+    val games by lazy {
+        mainViewModel.gamesDatabase.gamesList
+    }
+
+    val loading by lazy {
+        mainViewModel.gamesDatabase.gamesListLoading
+    }
+
+    val error by lazy {
+        mainViewModel.gamesDatabase.gamesListError
+    }
+
 
 }

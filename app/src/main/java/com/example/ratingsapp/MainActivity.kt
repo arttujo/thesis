@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -39,6 +40,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "lo
 
 
 
+@ExperimentalFoundationApi
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -66,9 +68,10 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    @ExperimentalFoundationApi
     @ExperimentalAnimationApi
-    @ExperimentalPagerApi
     @ExperimentalMaterialApi
+    @ExperimentalPagerApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupVm()
@@ -96,6 +99,7 @@ class ViewModelFactory(private val apiHelper: ApiHelper) : ViewModelProvider.Fac
 
 
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
 @Composable

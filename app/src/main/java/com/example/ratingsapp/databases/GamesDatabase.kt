@@ -4,6 +4,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.liveData
 import com.example.ratingsapp.repositories.MainRepository
 import com.example.ratingsapp.utils.Resource
+import com.example.ratingsapp.utils.Status
 import kotlinx.coroutines.Dispatchers
 import java.lang.Exception
 
@@ -19,15 +20,27 @@ class GamesDatabase (private val mainRepository: MainRepository){
     }
 
 
-    val gamesList by lazy {
+    private val gamesResource by lazy {
         Transformations.map(getGames()) {
+            it
+        }
+    }
+
+    val gamesList by lazy {
+        Transformations.map(gamesResource) {
             it.data ?: emptyList()
         }
     }
 
-    val gamesListStatus by lazy {
-        Transformations.map(getGames()) {
-            it.status
+    val gamesListLoading by lazy {
+        Transformations.map(gamesResource) {
+            it.status == Status.LOADING
+        }
+    }
+
+    val gamesListError by lazy {
+        Transformations.map(gamesResource) {
+            it.status == Status.ERROR
         }
     }
 
