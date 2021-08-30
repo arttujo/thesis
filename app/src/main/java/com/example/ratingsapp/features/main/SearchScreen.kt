@@ -7,9 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
-@Preview(showSystemUi = true)
 @Composable
-fun SearchScreen() {
+fun SearchScreen(mainViewModel: MainViewModel) {
     Column(modifier = Modifier.fillMaxSize()) {
 
         Text(text = "Search")

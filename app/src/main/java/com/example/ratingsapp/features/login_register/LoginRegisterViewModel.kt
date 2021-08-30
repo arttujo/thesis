@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.NavController
+import com.example.ratingsapp.features.main.MainViewModel
 
 class LoginViewModel:ViewModel() {
 
@@ -19,8 +21,10 @@ class LoginViewModel:ViewModel() {
         _username.value = newInput
     }
 
-    fun onLoginClick(){
-
+    fun onLoginClick(navController: NavController){
+        navController.navigate("main") {
+            popUpTo(0) // This will essentially clear the backstack preventing back navigate
+        }
     }
 
 
@@ -28,6 +32,14 @@ class LoginViewModel:ViewModel() {
 }
 
 class RegisterViewModel: ViewModel() {
+
+
+    private lateinit var mvm: MainViewModel
+
+    fun init(mainViewModel: MainViewModel) {
+        this.mvm = mainViewModel
+    }
+
 
     private val _username = MutableLiveData("")
     private val _firstname = MutableLiveData("")

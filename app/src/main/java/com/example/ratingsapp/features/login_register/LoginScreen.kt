@@ -91,7 +91,7 @@ fun LoginScreenContent(vm: LoginViewModel, usernameInput: String, navController:
 
         Button(
             onClick = {
-                vm.onLoginClick()
+                vm.onLoginClick(navController)
             },
             enabled = vm.username.value != "",
             modifier = Modifier

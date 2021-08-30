@@ -19,17 +19,27 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.ratingsapp.R
+import com.example.ratingsapp.api.ApiHelper
+import com.example.ratingsapp.api.JsonApiService
 import com.example.ratingsapp.components.BackArrowTopBar
 import com.example.ratingsapp.components.ColumnWithDefaultMargin
 import com.example.ratingsapp.components.GenericClearableTextInput
+import com.example.ratingsapp.features.main.MainViewModel
+import com.example.ratingsapp.repositories.MainRepository
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
 
 
 @ExperimentalAnimationApi
 @Composable
-fun RegisterScreen(navController: NavController){
+fun RegisterScreen(navController: NavController, mainVm: MainViewModel){
     val vm: RegisterViewModel = viewModel()
+    vm.init(mainViewModel = mainVm)
+    RegisterScreenContent(navController = navController, vm = vm)
+}
 
+@ExperimentalAnimationApi
+@Composable
+fun RegisterScreenContent(navController: NavController, vm: RegisterViewModel){
     Scaffold(
         topBar = { BackArrowTopBar(navController = navController) },
         modifier = Modifier
@@ -73,14 +83,13 @@ fun RegisterScreen(navController: NavController){
                 onChange = {vm.onUNInputChange(it)},
                 onClear = {vm.clearUsername()}
             )
-            
+
             Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = stringResource(id = R.string.register_title))
             }
 
         }
     }
-
 }
 
 
@@ -90,9 +99,8 @@ fun RegisterScreen(navController: NavController){
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
-    val navController = rememberNavController()
 
     RatingsAppTheme {
-        RegisterScreen(navController)
+        RegisterScreenContent(navController = rememberNavController(), vm = RegisterViewModel())
     }
 }

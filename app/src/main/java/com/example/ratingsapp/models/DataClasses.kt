@@ -38,6 +38,7 @@ data class Game(
     val likes: Int
 )
 
+
 data class Author(
     @SerializedName("id")
     val id: Int,
@@ -63,6 +64,9 @@ data class Comment(
     @SerializedName("likes")
     val likes: Int
 )
+
+data class AuthorCreator(val username: String, val firstname: String, val lastname: String)
+
 
 
 /**

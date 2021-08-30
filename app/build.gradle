@@ -91,6 +91,11 @@ dependencies {
     implementation("androidx.datastore:datastore:1.0.0")
 
 
+    //LifeCycle
+    implementation 'androidx.lifecycle:lifecycle-common:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     /**
      * Other

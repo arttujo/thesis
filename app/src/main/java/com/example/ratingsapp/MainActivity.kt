@@ -4,14 +4,12 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -19,18 +17,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.ratingsapp.api.ApiHelper
+import com.example.ratingsapp.api.RetrofitBuilder
 import com.example.ratingsapp.components.MainTopBar
 import com.example.ratingsapp.features.login_register.LoginScreen
-import com.example.ratingsapp.features.login_register.LoginViewModel
 import com.example.ratingsapp.features.login_register.RegisterScreen
-import com.example.ratingsapp.features.main.MainViewModel
-import com.example.ratingsapp.features.main.TabItem
+import com.example.ratingsapp.features.main.*
+import com.example.ratingsapp.repositories.MainRepository
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
+import java.lang.IllegalArgumentException
 
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "login")
@@ -41,12 +43,14 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "lo
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
-fun ApplicationRoot() {
+fun ApplicationRoot(mainVm: MainViewModel) {
     val navController = rememberNavController()
-    NavHost(navController = navController , startDestination = "login" ) {
-        composable("login") { LoginScreen(navController)}
-        composable("register") { RegisterScreen(navController) }
-        composable("main") { MainScreen()}
+    RatingsAppTheme() {
+        NavHost(navController = navController , startDestination = "login" ) {
+            composable("login") { LoginScreen(navController)}
+            composable("register") { RegisterScreen(navController, mainVm) }
+            composable("main") { MainScreen(mainVm)}
+        }
     }
 }
 
@@ -55,37 +59,52 @@ fun ApplicationRoot() {
 
 class MainActivity : ComponentActivity() {
 
+    lateinit var viewModel: MainViewModel
+    private fun setupVm(){
+        viewModel = ViewModelProvider(this,ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+        ).get(MainViewModel::class.java)
+    }
+
 
     @ExperimentalAnimationApi
     @ExperimentalPagerApi
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
+        setupVm()
         setContent {
             RatingsAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    ApplicationRoot()
+                    ApplicationRoot(viewModel)
                 }
             }
         }
     }
-    private fun logOut(){}
 
 }
+
+class ViewModelFactory(private val apiHelper: ApiHelper) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+            return MainViewModel(MainRepository(apiHelper)) as T
+        }
+        throw IllegalArgumentException("Unknown Class Name")
+    }
+}
+
 
 
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
 @Composable
-fun MainScreen() {
-    val tabs = listOf(
-        TabItem.Home,
-        TabItem.Search,
-        TabItem.Profile
-    )
+fun MainScreen(mainVm: MainViewModel) {
+    val home = TabItem(R.drawable.ic_home,R.string.home, mainVm) { HomeScreen(mainVm) }
+    val search = TabItem(R.drawable.ic_search, R.string.search,mainVm) { SearchScreen(mainVm)}
+    val profile = TabItem(R.drawable.ic_profile, R.string.profile, mainVm) { ProfileScreen(mainVm)}
+
+    val tabs = listOf(home,search,profile)
     val pagerState = rememberPagerState(pageCount = tabs.size)
     Scaffold(
         topBar = { MainTopBar {
@@ -144,17 +163,6 @@ fun Tabs(tabs: List<TabItem>, pagerState: PagerState) {
         }
     }
 }
-
-@ExperimentalMaterialApi
-@ExperimentalPagerApi
-@Preview(showBackground = true)
-@Composable
-fun Main() {
-    RatingsAppTheme {
-        MainScreen()
-    }
-}
-
 
 @Composable
 fun RatingsApp(){
