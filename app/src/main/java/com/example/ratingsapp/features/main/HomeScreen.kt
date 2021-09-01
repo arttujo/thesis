@@ -141,20 +141,4 @@ class HomeViewModel:ViewModel(){
        }
    }
 
-/*
-    val games by lazy {
-        mainViewModel.gamesDatabase.gamesList
-    }
-
-    val loading by lazy {
-        mainViewModel.gamesDatabase.gamesListLoading
-    }
-
-    val error by lazy {
-        mainViewModel.gamesDatabase.gamesListError
-    }
-
-
- */
-
 }

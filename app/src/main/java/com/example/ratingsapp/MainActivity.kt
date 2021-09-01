@@ -49,7 +49,7 @@ fun ApplicationRoot(mainVm: MainViewModel) {
     val navController = rememberNavController()
     RatingsAppTheme() {
         NavHost(navController = navController , startDestination = "login" ) {
-            composable("login") { LoginScreen(navController)}
+            composable("login") { LoginScreen(navController, mainVm)}
             composable("register") { RegisterScreen(navController, mainVm) }
             composable("main") { MainScreen(mainVm)}
         }

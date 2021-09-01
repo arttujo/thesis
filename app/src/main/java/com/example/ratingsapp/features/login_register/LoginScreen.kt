@@ -1,5 +1,6 @@
 package com.example.ratingsapp.features.login_register
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
@@ -16,45 +17,57 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.ratingsapp.MainScreen
 import com.example.ratingsapp.R
+import com.example.ratingsapp.api.ApiHelper
+import com.example.ratingsapp.api.JsonApiService
+import com.example.ratingsapp.components.LoadingOverlay
 import com.example.ratingsapp.components.NoActionTopBar
+import com.example.ratingsapp.features.main.MainViewModel
+import com.example.ratingsapp.repositories.MainRepository
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
-import com.google.accompanist.pager.ExperimentalPagerApi
-
 
 
 @ExperimentalAnimationApi
 @Composable
-fun LoginScreen(navController: NavController) {
-    val loginNavController = rememberNavController()
+fun LoginScreen(navController: NavController, mainVm: MainViewModel) {
     val vm: LoginViewModel = viewModel()
+    if (!vm.hasInit) vm.init(mainVm)
     val usernameInput: String by vm.username.observeAsState("")
 
+    val errorEvent by vm.errorEvent.observeAsState()
 
     Scaffold(
         topBar = { NoActionTopBar() },
         modifier = Modifier
             .fillMaxSize()
     ) {
-      LoginScreenContent(vm = vm, usernameInput = usernameInput, navController )
+        if (vm.loading.value == true) {
+            LoadingOverlay()
+        } else {
+            LoginScreenContent(vm = vm, usernameInput = usernameInput, navController )
+            errorEvent?.getContentIfNotHandled().let {
+                if (it == true) {
+                    Toast.makeText(LocalContext.current, stringResource(id =R.string.login_failed), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
-
 }
 
 
 @ExperimentalAnimationApi
 @Composable
 fun LoginScreenContent(vm: LoginViewModel, usernameInput: String, navController: NavController) {
+    val focusManager = LocalFocusManager.current
     Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_padding))) {
         Text(
             text = stringResource(id = R.string.login_title),
@@ -91,7 +104,8 @@ fun LoginScreenContent(vm: LoginViewModel, usernameInput: String, navController:
 
         Button(
             onClick = {
-                vm.onLoginClick(navController)
+                focusManager.clearFocus()
+                vm.login(navController)
             },
             enabled = vm.username.value != "",
             modifier = Modifier
@@ -113,15 +127,12 @@ fun LoginScreenContent(vm: LoginViewModel, usernameInput: String, navController:
     }
 }
 
-
-
 @ExperimentalAnimationApi
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
 fun LoginPreview() {
-    val navController = rememberNavController()
     RatingsAppTheme {
-        LoginScreen(navController)
+        LoginScreenContent(vm = LoginViewModel(), usernameInput =" ", navController = rememberNavController())
     }
 
 }

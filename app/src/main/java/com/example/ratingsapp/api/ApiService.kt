@@ -1,5 +1,6 @@
 package com.example.ratingsapp.api
 
+import com.example.ratingsapp.models.Author
 import com.example.ratingsapp.models.AuthorCreator
 import com.example.ratingsapp.models.Game
 import okhttp3.OkHttpClient
@@ -15,6 +16,9 @@ import retrofit2.http.POST
 interface JsonApiService {
     @GET("games")
     suspend fun getGames(): Response<List<Game>>
+
+    @GET("authors")
+    suspend fun getAuthors(): Response<List<Author>>
 
     @POST("authors")
     suspend fun registerUser(@Body request: AuthorCreator)
@@ -45,5 +49,7 @@ object RetrofitBuilder {
 
 class ApiHelper(private val apiService: JsonApiService) {
     suspend fun getGames() = apiService.getGames()
+    suspend fun getAuthors() = apiService.getAuthors()
+
     suspend fun postAuthors(creator: AuthorCreator) = apiService.registerUser(creator)
 }
