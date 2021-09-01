@@ -43,6 +43,7 @@ fun LoginScreen(navController: NavController, mainVm: MainViewModel) {
     if (!vm.hasInit) vm.init(mainVm)
     val usernameInput: String by vm.username.observeAsState("")
 
+    val loading by vm.loading.observeAsState()
     val errorEvent by vm.errorEvent.observeAsState()
 
     Scaffold(
@@ -50,7 +51,7 @@ fun LoginScreen(navController: NavController, mainVm: MainViewModel) {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        if (vm.loading.value == true) {
+        if (loading == true) {
             LoadingOverlay()
         } else {
             LoginScreenContent(vm = vm, usernameInput = usernameInput, navController )

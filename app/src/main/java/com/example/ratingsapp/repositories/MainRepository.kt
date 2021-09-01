@@ -1,5 +1,7 @@
 package com.example.ratingsapp.repositories
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.ratingsapp.api.ApiHelper
 import com.example.ratingsapp.models.Author
 import com.example.ratingsapp.models.AuthorCreator
@@ -11,15 +13,38 @@ import java.lang.Exception
 
 data class ApiError(val code: Int, val message: String?)
 
-class MainRepository(private val apiHelper: ApiHelper) {
+/**
+ * Very simple cache implementation
+ */
+interface Cache {
+    val size: Int
+    operator fun set(key: Any, value: Any)
+    operator fun get(key: Any): Any?
+    fun remove(key: Any): Any?
+    fun clear()
+}
+const val AUTHOR_CACHE_KEY = "AUTHOR_CACHE_KEY"
 
+class MainRepository(private val apiHelper: ApiHelper):Cache {
+    private val cache = HashMap<Any, Any>()
+    override val size: Int
+        get() = cache.size
+
+    override fun clear() = this.cache.clear()
+
+    override fun get(key: Any) = this.cache[key]
+
+    override fun remove(key: Any) = this.cache.remove(key)
+
+    override fun set(key: Any, value: Any) {
+        this.cache[key] = value
+    }
 
     suspend fun getGames(): Result<List<Game>> = withContext(Dispatchers.IO) {
         try {
             val response = apiHelper.getGames()
             if (response.isSuccessful) {
-                val result = Result.Success(response.body()!!)
-                return@withContext result
+                return@withContext Result.Success(response.body()!!)
             } else {
                 return@withContext Result.Error(ApiError(response.code(),response.message()))
             }
@@ -32,8 +57,8 @@ class MainRepository(private val apiHelper: ApiHelper) {
         try {
             val response = apiHelper.getAuthors()
             if (response.isSuccessful) {
-                val result = Result.Success(response.body()!!)
-                return@withContext result
+                set(AUTHOR_CACHE_KEY, response.body()!!)
+                return@withContext Result.Success(response.body()!!)
             } else {
                 return@withContext Result.Error(ApiError(response.code(),response.message()))
             }
@@ -43,6 +68,16 @@ class MainRepository(private val apiHelper: ApiHelper) {
     }
 
 
-
-    suspend fun postAuthors(creator: AuthorCreator) = apiHelper.postAuthors(creator)
+    suspend fun postAuthors(creator: AuthorCreator): Result<Author> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiHelper.postAuthors(creator)
+            if (response.isSuccessful) {
+                return@withContext Result.Success(response.body()!!)
+            } else {
+                return@withContext Result.Error(ApiError(response.code(),response.message()))
+            }
+        } catch (e: Exception) {
+            return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
+        }
+    }
 }

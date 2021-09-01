@@ -21,7 +21,7 @@ interface JsonApiService {
     suspend fun getAuthors(): Response<List<Author>>
 
     @POST("authors")
-    suspend fun registerUser(@Body request: AuthorCreator)
+    suspend fun registerUser(@Body request: AuthorCreator): Response<Author>
 
 
 }

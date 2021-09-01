@@ -1,5 +1,7 @@
 package com.example.ratingsapp.features.login_register
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,8 +11,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,13 +38,24 @@ import com.example.ratingsapp.ui.theme.RatingsAppTheme
 @Composable
 fun RegisterScreen(navController: NavController, mainVm: MainViewModel){
     val vm: RegisterViewModel = viewModel()
-    vm.init(mainViewModel = mainVm)
+    if (!vm.hasInit) vm.init(mainViewModel = mainVm)
+    val cached = vm.cachedAuthors
+    Log.d("DBGL","cache: $cached")
     RegisterScreenContent(navController = navController, vm = vm)
 }
 
 @ExperimentalAnimationApi
 @Composable
 fun RegisterScreenContent(navController: NavController, vm: RegisterViewModel){
+    val focusManager = LocalFocusManager.current
+    val errorEvent by vm.errorEvent.observeAsState()
+
+    errorEvent?.getContentIfNotHandled().let {
+        if (it == true) {
+            Toast.makeText(LocalContext.current, stringResource(id =R.string.register_failed), Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Scaffold(
         topBar = { BackArrowTopBar(navController = navController) },
         modifier = Modifier
@@ -84,7 +100,12 @@ fun RegisterScreenContent(navController: NavController, vm: RegisterViewModel){
                 onClear = {vm.clearUsername()}
             )
 
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+            Button(
+                onClick = {
+                    focusManager.clearFocus()
+                    vm.onRegisterClick(navController)
+                          },
+                modifier = Modifier.fillMaxWidth()) {
                 Text(text = stringResource(id = R.string.register_title))
             }
 

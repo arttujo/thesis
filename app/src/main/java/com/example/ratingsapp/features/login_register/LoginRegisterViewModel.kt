@@ -1,9 +1,13 @@
 package com.example.ratingsapp.features.login_register
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.navigation.NavController
 import com.example.ratingsapp.features.main.MainViewModel
+import com.example.ratingsapp.models.Author
+import com.example.ratingsapp.models.AuthorCreator
+import com.example.ratingsapp.repositories.AUTHOR_CACHE_KEY
 import com.example.ratingsapp.repositories.ApiError
 import com.example.ratingsapp.utils.Event
 import com.example.ratingsapp.utils.Result
@@ -11,42 +15,31 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
 
-
     var hasInit = false
     lateinit var mainViewModel: MainViewModel
 
     fun init(mainViewModel: MainViewModel) {
         hasInit = true
         this.mainViewModel = mainViewModel
+        load()
     }
 
     val loading = MutableLiveData<Boolean>().apply { value = false }
     val error = MutableLiveData<ApiError>().apply { value = null }
-
+    val authors = MutableLiveData<List<Author>>()
 
     private val _errorEvent = MutableLiveData<Event<Boolean>>()
     val errorEvent = _errorEvent
 
-
     /**
-     * Login here is simulated. We fetch the users from the api and then compare
-     * if any usernames matches we take it and the login is successfull.
+     * Load authors for simulated login
      */
-    fun login(navController: NavController) {
+    private fun load() {
         viewModelScope.launch {
             loading.value = true
             when (val result = mainViewModel.repository.getAuthors()) {
                 is Result.Success -> {
-                    val match = result.data.firstOrNull {
-                        it.username == username.value
-                    }
-                    if (match != null) {
-                        navController.navigate("main") {
-                            popUpTo(0)
-                        }
-                    } else {
-                        _errorEvent.value = Event(true)
-                    }
+                   authors.value = result.data ?: emptyList()
                 }
                 is Result.Error -> {
                     _errorEvent.value = Event(true)
@@ -55,7 +48,20 @@ class LoginViewModel : ViewModel() {
             }
             loading.value = false
         }
+    }
 
+    /**
+     * Login
+     */
+    fun login(navController: NavController) {
+        val match = authors.value?.firstOrNull {
+            it.username == username.value
+        }
+        if (match != null) {
+            navController.navigate("main")
+        } else {
+            _errorEvent.value = Event(true)
+        }
     }
 
     private val _username = MutableLiveData("")
@@ -75,14 +81,61 @@ class LoginViewModel : ViewModel() {
 }
 
 class RegisterViewModel : ViewModel() {
-
-
     private lateinit var mvm: MainViewModel
+    var hasInit = false
 
     fun init(mainViewModel: MainViewModel) {
+        hasInit = true
         this.mvm = mainViewModel
     }
 
+    private val _errorEvent = MutableLiveData<Event<Boolean>>()
+    val errorEvent = _errorEvent
+
+    val loading = MutableLiveData<Boolean>().apply { value = false }
+    val error = MutableLiveData<ApiError>().apply { value = null }
+
+    val cachedAuthors by lazy {
+        val cached = mvm.repository[AUTHOR_CACHE_KEY]
+        // Cache must be null checked before cast
+        if (cached != null) cached as List<Author> else null
+
+    }
+
+    fun onRegisterClick(navController: NavController) {
+        viewModelScope.launch {
+            loading.value = true
+            // These can be asserted. Kotlin for some reason thinks they can be bull even when they
+            // have a starting value of ""
+            val creator = AuthorCreator(username.value!!, firstname.value!!, lastname.value!!)
+            if (validUsername(creator)) {
+                when (val result = mvm.repository.postAuthors(creator)) {
+                    is Result.Success -> {
+                        navController.navigate("main")
+                    }
+                    is Result.Error -> {
+                        _errorEvent.value = Event(true)
+                        error.value = result.exception
+                    }
+                }
+            } else {
+                _errorEvent.value = Event(true)
+            }
+            loading.value = false
+        }
+    }
+
+    /**
+     * Another mock. This would normally be done in the backend but JSONServer cannot do validation
+     * so we do it client side
+     */
+    private fun validUsername(author: AuthorCreator):Boolean {
+       val exists = cachedAuthors?.firstOrNull {
+           it.username == author.username
+        }
+        Log.d("DBGL", "$exists")
+        return exists == null
+    }
 
     private val _username = MutableLiveData("")
     private val _firstname = MutableLiveData("")
