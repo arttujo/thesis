@@ -4,6 +4,7 @@ import com.example.ratingsapp.models.AuthorCreator
 import com.example.ratingsapp.models.Game
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
@@ -13,7 +14,7 @@ import retrofit2.http.POST
 
 interface JsonApiService {
     @GET("games")
-    suspend fun getGames(): List<Game>
+    suspend fun getGames(): Response<List<Game>>
 
     @POST("authors")
     suspend fun registerUser(@Body request: AuthorCreator)

@@ -1,5 +1,6 @@
 package com.example.ratingsapp.features.main
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,8 +18,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
@@ -26,20 +29,26 @@ import com.example.ratingsapp.components.ColumnWithDefaultMargin
 import com.example.ratingsapp.components.LoadingOverlay
 import com.example.ratingsapp.models.Game
 import com.example.ratingsapp.models.Review
+import com.example.ratingsapp.repositories.ApiError
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
 import com.example.ratingsapp.utils.GameListProvider
+import com.example.ratingsapp.utils.ReloadSnackBar
+import com.example.ratingsapp.utils.Result
 import com.example.ratingsapp.utils.ReviewProvider
+import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 @ExperimentalCoilApi
 @Composable
 fun HomeScreen(mainVm:MainViewModel) {
     val vm: HomeViewModel = viewModel()
-    vm.init(mainVm)
-
+    if (!vm.hasInit) {
+        vm.init(mainVm)
+    }
     val games = vm.games.observeAsState()
     val loading = vm.loading.observeAsState()
     val error = vm.error.observeAsState()
+
 
     ColumnWithDefaultMargin {
         if (loading.value == true) {
@@ -47,6 +56,13 @@ fun HomeScreen(mainVm:MainViewModel) {
         }
         else {
             HomeGameList(games = games.value?: emptyList())
+            if (error.value != null) {
+                ReloadSnackBar {
+                    vm.load()
+                }
+                Text(text = error.value?.message ?: "Unkown error")
+                Text(text = "Code: ${error.value?.code}")
+            }
         }
     }
 }
@@ -98,10 +114,34 @@ class HomeViewModel:ViewModel(){
 
     lateinit var mainViewModel: MainViewModel
 
+    var hasInit = false
+
     fun init(mainViewModel: MainViewModel) {
+        hasInit = true
         this.mainViewModel = mainViewModel
+        load()
     }
 
+    val loading = MutableLiveData<Boolean>().apply { value = false }
+    val games = MutableLiveData<List<Game>>()
+    val error = MutableLiveData<ApiError>().apply { value = null }
+
+   fun load() {
+       viewModelScope.launch {
+           loading.value = true
+           when (val result = mainViewModel.repository.getGames()) {
+               is Result.Success -> {
+                   games.value = result.data ?: emptyList()
+               }
+               is Result.Error -> {
+                   error.value = result.exception
+               }
+           }
+           loading.value = false
+       }
+   }
+
+/*
     val games by lazy {
         mainViewModel.gamesDatabase.gamesList
     }
@@ -114,5 +154,7 @@ class HomeViewModel:ViewModel(){
         mainViewModel.gamesDatabase.gamesListError
     }
 
+
+ */
 
 }
