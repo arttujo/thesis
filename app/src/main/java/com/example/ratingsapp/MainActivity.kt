@@ -1,30 +1,30 @@
 package com.example.ratingsapp
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material.TabRowDefaults
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
 import com.example.ratingsapp.api.ApiHelper
 import com.example.ratingsapp.api.RetrofitBuilder
+import com.example.ratingsapp.components.AlertDlg
 import com.example.ratingsapp.components.MainTopBar
 import com.example.ratingsapp.features.login_register.LoginScreen
 import com.example.ratingsapp.features.login_register.RegisterScreen
@@ -36,10 +36,8 @@ import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "login")
 
-
-
+@ExperimentalCoilApi
 @ExperimentalFoundationApi
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
@@ -51,7 +49,7 @@ fun ApplicationRoot(mainVm: MainViewModel) {
         NavHost(navController = navController , startDestination = "login" ) {
             composable("login") { LoginScreen(navController, mainVm)}
             composable("register") { RegisterScreen(navController, mainVm) }
-            composable("main") { MainScreen(mainVm)}
+            composable("main") { MainScreen(navController,mainVm)}
         }
     }
 }
@@ -68,6 +66,7 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    @ExperimentalCoilApi
     @ExperimentalFoundationApi
     @ExperimentalAnimationApi
     @ExperimentalMaterialApi
@@ -99,22 +98,42 @@ class ViewModelFactory(private val apiHelper: ApiHelper) : ViewModelProvider.Fac
 
 
 
+@ExperimentalCoilApi
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
 @Composable
-fun MainScreen(mainVm: MainViewModel) {
+fun MainScreen(navController: NavHostController, mainVm: MainViewModel) {
     val home = TabItem(R.drawable.ic_home,R.string.home, mainVm) { HomeScreen(mainVm) }
     val search = TabItem(R.drawable.ic_search, R.string.search,mainVm) { SearchScreen(mainVm)}
     val profile = TabItem(R.drawable.ic_profile, R.string.profile, mainVm) { ProfileScreen(mainVm)}
-
     val tabs = listOf(home,search,profile)
     val pagerState = rememberPagerState(pageCount = tabs.size)
+
+    val logoutEvent by mainVm.logoutEvent.observeAsState()
+    var showDialog by remember { mutableStateOf(false) }
+
+    logoutEvent?.getContentIfNotHandled().let {
+        if (it != null) {
+            showDialog = true
+        }
+    }
+    BackHandler(onBack = {
+        if (navController.previousBackStackEntry == null) {
+            showDialog = true
+        }
+    })
+
     Scaffold(
         topBar = { MainTopBar {
-            //TODO logout click
+            showDialog = true
         }}
     ) {
+
+        if (showDialog) {
+            AlertDlg(confirmAction = { mainVm.logout(navController) }, onDismiss = {showDialog = false})
+        }
+
         Column {
             Tabs(tabs = tabs, pagerState = pagerState)
             TabsContent(tabs = tabs, pagerState = pagerState)

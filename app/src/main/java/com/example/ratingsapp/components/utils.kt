@@ -5,7 +5,10 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -15,34 +18,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import com.example.ratingsapp.R
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
 
 
 @Composable
 fun ColumnWithDefaultMargin(composable: @Composable () -> Unit) {
-    Column (modifier = Modifier
-        .padding(dimensionResource(id = R.dimen.default_padding))
-        .fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .padding(dimensionResource(id = R.dimen.default_padding))
+            .fillMaxSize()
+    ) {
         composable()
     }
 }
 
 @Composable
 fun LoadingOverlay() {
-    Column (
+    Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         CircularProgressIndicator()
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun LoadingPreview(){
+fun LoadingPreview() {
     RatingsAppTheme {
         LoadingOverlay()
     }
@@ -56,7 +60,8 @@ fun GenericClearableTextInput(
     modifier: Modifier?,
     inputValue: String,
     onChange: (String) -> Unit,
-    onClear: () -> Unit) {
+    onClear: () -> Unit
+) {
 
 
     TextField(
@@ -87,6 +92,44 @@ fun GenericClearableTextInput(
 @Preview(showBackground = true)
 @Composable
 fun ClearInput() {
-    GenericClearableTextInput(inputValue = "", onChange = {}, onClear = {}, hint = "Username", contentDescription = "Content desciption", modifier = null)
+    GenericClearableTextInput(
+        inputValue = "",
+        onChange = {},
+        onClear = {},
+        hint = "Username",
+        contentDescription = "Content desciption",
+        modifier = null
+    )
 }
 
+
+@Composable
+fun AlertDlg(confirmAction: () ->Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text(text = stringResource(id = R.string.logout_confirmation)) },
+        confirmButton = {
+            Button(
+                onClick = { confirmAction() },
+            ) {
+                Text(text = stringResource(id = R.string.ok))
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = { onDismiss() },
+            ) {
+                Text(text = stringResource(id = R.string.cancel))
+            }
+        }
+
+    )
+}
+
+@Preview
+@Composable
+fun AlertPreview() {
+    RatingsAppTheme() {
+        AlertDlg (onDismiss = {},confirmAction = {})
+    }
+}

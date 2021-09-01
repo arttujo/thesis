@@ -58,7 +58,9 @@ class LoginViewModel : ViewModel() {
             it.username == username.value
         }
         if (match != null) {
-            navController.navigate("main")
+            navController.navigate("main") {
+                popUpTo(0) // clears backstack essentially
+            }
         } else {
             _errorEvent.value = Event(true)
         }
@@ -111,7 +113,9 @@ class RegisterViewModel : ViewModel() {
             if (validUsername(creator)) {
                 when (val result = mvm.repository.postAuthors(creator)) {
                     is Result.Success -> {
-                        navController.navigate("main")
+                        navController.navigate("main") {
+                            popUpTo(0) // clears backstack essentially
+                        }
                     }
                     is Result.Error -> {
                         _errorEvent.value = Event(true)

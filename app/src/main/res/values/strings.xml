@@ -4,6 +4,9 @@
     <string name="login_title">Login</string>
     <string name="login_failed">Login Failed</string>
     <string name="register_failed">Registration failed: Username taken</string>
+    <string name="logout_confirmation">Are you sure you want to logout?</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 
     <string name="register_title">Register</string>
 
