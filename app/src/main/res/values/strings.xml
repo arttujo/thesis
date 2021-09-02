@@ -7,6 +7,7 @@
     <string name="logout_confirmation">Are you sure you want to logout?</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="remember">Remember Me</string>
 
     <string name="register_title">Register</string>
 

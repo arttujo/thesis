@@ -6,10 +6,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -23,18 +20,16 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.ratingsapp.R
-import com.example.ratingsapp.api.ApiHelper
-import com.example.ratingsapp.api.JsonApiService
 import com.example.ratingsapp.components.LoadingOverlay
 import com.example.ratingsapp.components.NoActionTopBar
 import com.example.ratingsapp.features.main.MainViewModel
-import com.example.ratingsapp.repositories.MainRepository
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
-
+import androidx.datastore.preferences.core.*
 
 @ExperimentalAnimationApi
 @Composable
@@ -69,6 +64,7 @@ fun LoginScreen(navController: NavController, mainVm: MainViewModel) {
 @Composable
 fun LoginScreenContent(vm: LoginViewModel, usernameInput: String, navController: NavController) {
     val focusManager = LocalFocusManager.current
+
     Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_padding))) {
         Text(
             text = stringResource(id = R.string.login_title),
@@ -98,11 +94,10 @@ fun LoginScreenContent(vm: LoginViewModel, usernameInput: String, navController:
             value = usernameInput,
             onValueChange = { vm.onInputChange(it) },
             modifier = Modifier
-                .padding(bottom = 80.dp)
+                .padding(bottom = 50.dp)
                 .fillMaxWidth(),
             label = { Text(text = stringResource(id = R.string.username_hint)) }
         )
-
         Button(
             onClick = {
                 focusManager.clearFocus()

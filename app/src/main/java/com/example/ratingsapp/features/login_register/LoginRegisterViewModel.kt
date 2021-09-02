@@ -2,8 +2,10 @@ package com.example.ratingsapp.features.login_register
 
 import android.content.Context
 import android.util.Log
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.*
 import androidx.navigation.NavController
+import com.example.ratingsapp.PreferenceKeys
 import com.example.ratingsapp.features.main.MainViewModel
 import com.example.ratingsapp.models.Author
 import com.example.ratingsapp.models.AuthorCreator
@@ -11,6 +13,7 @@ import com.example.ratingsapp.repositories.AUTHOR_CACHE_KEY
 import com.example.ratingsapp.repositories.ApiError
 import com.example.ratingsapp.utils.Event
 import com.example.ratingsapp.utils.Result
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -58,6 +61,9 @@ class LoginViewModel : ViewModel() {
             it.username == username.value
         }
         if (match != null) {
+            viewModelScope.launch {
+                mainViewModel.saveLogin(match)
+            }
             navController.navigate("main") {
                 popUpTo(0) // clears backstack essentially
             }
@@ -113,6 +119,7 @@ class RegisterViewModel : ViewModel() {
             if (validUsername(creator)) {
                 when (val result = mvm.repository.postAuthors(creator)) {
                     is Result.Success -> {
+                        mvm.saveLogin(result.data)
                         navController.navigate("main") {
                             popUpTo(0) // clears backstack essentially
                         }

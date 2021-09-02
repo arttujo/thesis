@@ -1,6 +1,8 @@
 package com.example.ratingsapp
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -15,6 +17,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
@@ -34,8 +38,7 @@ import com.example.ratingsapp.ui.theme.RatingsAppTheme
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
-
-
+import androidx.datastore.preferences.core.*
 
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
@@ -45,8 +48,17 @@ import java.lang.IllegalArgumentException
 @Composable
 fun ApplicationRoot(mainVm: MainViewModel) {
     val navController = rememberNavController()
+
+    val login = mainVm.loggedInAs.observeAsState()
+
+    val startDestination = remember {  mutableStateOf("login")}
+    Log.d("DBGL", "LOGGED IN: ${login.value}")
+
     RatingsAppTheme() {
-        NavHost(navController = navController , startDestination = "login" ) {
+        if (login.value != null) {
+            startDestination.value = "main"
+        }
+        NavHost(navController = navController , startDestination = startDestination.value ) {
             composable("login") { LoginScreen(navController, mainVm)}
             composable("register") { RegisterScreen(navController, mainVm) }
             composable("main") { MainScreen(navController,mainVm)}
@@ -54,17 +66,13 @@ fun ApplicationRoot(mainVm: MainViewModel) {
     }
 }
 
-
-
+const val ARG_DATA_STORE = "ARG_DATA_STORE"
+val Context.prefsDataStore by preferencesDataStore(name = ARG_DATA_STORE) //preference datastore
+object PreferenceKeys {
+    val LOGGED_IN_AUTHOR = stringPreferencesKey("LOGGED_IN_AUTHOR")
+}
 
 class MainActivity : ComponentActivity() {
-
-    lateinit var viewModel: MainViewModel
-    private fun setupVm(){
-        viewModel = ViewModelProvider(this,ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
-        ).get(MainViewModel::class.java)
-    }
-
 
     @ExperimentalCoilApi
     @ExperimentalFoundationApi
@@ -73,7 +81,10 @@ class MainActivity : ComponentActivity() {
     @ExperimentalPagerApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupVm()
+
+        val viewModel = ViewModelProvider(this,ViewModelFactory(ApiHelper(RetrofitBuilder.apiService),applicationContext.prefsDataStore))
+            .get(MainViewModel::class.java)
+
         setContent {
             RatingsAppTheme {
                 // A surface container using the 'background' color from the theme
@@ -86,11 +97,11 @@ class MainActivity : ComponentActivity() {
 
 }
 
-class ViewModelFactory(private val apiHelper: ApiHelper) : ViewModelProvider.Factory {
+class ViewModelFactory(private val apiHelper: ApiHelper, private val dataStore: DataStore<Preferences>) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(MainRepository(apiHelper)) as T
+            return MainViewModel(MainRepository(apiHelper), dataStore) as T
         }
         throw IllegalArgumentException("Unknown Class Name")
     }
