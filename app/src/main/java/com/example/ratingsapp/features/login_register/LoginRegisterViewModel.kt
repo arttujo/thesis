@@ -62,11 +62,19 @@ class LoginViewModel : ViewModel() {
         }
         if (match != null) {
             viewModelScope.launch {
-                mainViewModel.saveLogin(match)
+               when(val login = mainViewModel.repository.login(match.id)) {
+                    is Result.Success -> {
+                        mainViewModel.saveLogin(login.data)
+                        navController.navigate("main") {
+                            popUpTo(0) // clears backstack essentially
+                        }
+                    }
+                    is Result.Error -> {
+                        _errorEvent.value = Event(true)
+                    }
+                }
             }
-            navController.navigate("main") {
-                popUpTo(0) // clears backstack essentially
-            }
+
         } else {
             _errorEvent.value = Event(true)
         }

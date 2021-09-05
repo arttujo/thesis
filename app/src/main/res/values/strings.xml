@@ -27,6 +27,7 @@
 
 
     <string name="data_fetch_error">Fetching Data Failed!</string>
+    <string name="successful_delete">Deleted Review!</string>
     <string name="reload">Reload</string>
 
     <!-- Content Descriptions -->

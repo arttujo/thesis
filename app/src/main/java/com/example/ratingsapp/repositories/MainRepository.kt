@@ -24,6 +24,7 @@ interface Cache {
     fun clear()
 }
 const val AUTHOR_CACHE_KEY = "AUTHOR_CACHE_KEY"
+const val LOGIN_CACHE = "LOGIN_CACHE_KEY"
 
 class MainRepository(private val apiHelper: ApiHelper):Cache {
     private val cache = HashMap<Any, Any>()
@@ -53,6 +54,21 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
         }
     }
 
+    suspend fun login(id:Int): Result<Author> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiHelper.login(id)
+            if (response.isSuccessful) {
+                set(LOGIN_CACHE, response.body()!!)
+                return@withContext Result.Success(response.body()!!)
+            } else {
+                return@withContext Result.Error(ApiError(response.code(),response.message()))
+            }
+        } catch (e:Exception) {
+            return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
+        }
+    }
+
+
     suspend fun getAuthors(): Result<List<Author>> = withContext(Dispatchers.IO) {
         try {
             val response = apiHelper.getAuthors()
@@ -80,4 +96,22 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
         }
     }
+
+    suspend fun deleteReview(id:Int) = withContext(Dispatchers.IO) {
+        try {
+            val response = apiHelper.deleteReview(id)
+            if (response.isSuccessful) {
+                return@withContext Result.Success(null)
+            } else {
+                return@withContext Result.Error(ApiError(response.code(),response.message()))
+            }
+        } catch (e:Exception) {
+            return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
+        }
+    }
+
+
+
+
+
 }

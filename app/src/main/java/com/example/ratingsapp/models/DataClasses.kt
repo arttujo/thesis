@@ -47,7 +47,9 @@ data class Author(
     @SerializedName("firstname")
     val firstname: String,
     @SerializedName("lastname")
-    val lastname: String
+    val lastname: String,
+    @SerializedName("reviews")
+    val reviews: List<Review>
 )
 
 data class Comment(
