@@ -39,6 +39,12 @@ import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 import androidx.datastore.preferences.core.*
+import androidx.navigation.NavType
+import androidx.navigation.compose.navArgument
+import com.example.ratingsapp.features.details.GameDetailsScreen
+
+
+const val GAME_ID = "GAME_ID"
 
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
@@ -62,6 +68,9 @@ fun ApplicationRoot(mainVm: MainViewModel) {
             composable("login") { LoginScreen(navController, mainVm)}
             composable("register") { RegisterScreen(navController, mainVm) }
             composable("main") { MainScreen(navController,mainVm)}
+            composable("gameDetails/{GAME_ID}", arguments = listOf(navArgument(GAME_ID) {type = NavType.IntType }) ) {
+                GameDetailsScreen(mainViewModel = mainVm, navController = navController, gameId = it.arguments?.getInt(GAME_ID))
+            }
         }
     }
 }
@@ -115,7 +124,7 @@ class ViewModelFactory(private val apiHelper: ApiHelper, private val dataStore: 
 @ExperimentalPagerApi
 @Composable
 fun MainScreen(navController: NavHostController, mainVm: MainViewModel) {
-    val home = TabItem(R.drawable.ic_home,R.string.home, mainVm) { HomeScreen(mainVm) }
+    val home = TabItem(R.drawable.ic_home,R.string.home, mainVm) { HomeScreen(mainVm, navController) }
     val search = TabItem(R.drawable.ic_search, R.string.search,mainVm) { SearchScreen(mainVm)}
     val profile = TabItem(R.drawable.ic_profile, R.string.profile, mainVm) { ProfileScreen(mainVm)}
     val tabs = listOf(home,search,profile)

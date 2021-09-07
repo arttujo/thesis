@@ -27,7 +27,8 @@ interface JsonApiService {
     @POST("authors")
     suspend fun registerUser(@Body request: AuthorCreator): Response<Author>
 
-
+    @GET("games/{id}")
+    suspend fun getGameDetails(@Path("id") gameId: Int): Response<Game>
 
     @DELETE("reviews/{id}")
     suspend fun deleteReview(@Path("id") reviewId: Int): Response<Void>
@@ -58,10 +59,11 @@ object RetrofitBuilder {
 
 class ApiHelper(private val apiService: JsonApiService) {
     suspend fun getGames() = apiService.getGames()
+    suspend fun getGameDetails(gameId: Int) = apiService.getGameDetails(gameId)
+
     suspend fun getAuthors() = apiService.getAuthors()
     suspend fun login(id:Int) = apiService.login(id)
     suspend fun deleteReview(id: Int) = apiService.deleteReview(id)
-
 
     suspend fun postAuthors(creator: AuthorCreator) = apiService.registerUser(creator)
 }

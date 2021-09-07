@@ -1,6 +1,7 @@
 package com.example.ratingsapp.models
 
 import com.google.gson.annotations.SerializedName
+import java.lang.reflect.Array
 
 
 /**
@@ -35,7 +36,9 @@ data class Game(
     @SerializedName("imageLink")
     val imageLink: String,
     @SerializedName("likes")
-    val likes: Int
+    val likes: Int,
+    @SerializedName("reviews")
+    val reviews: List<Review> ? = emptyList()
 )
 
 
@@ -48,6 +51,12 @@ data class Author(
     val firstname: String,
     @SerializedName("lastname")
     val lastname: String,
+    @SerializedName("likedGames")
+    val likedGames: List<Int>? = null,
+    @SerializedName("likedComments")
+    val likedComments: List<Int> ? = null,
+    @SerializedName("likedReviews")
+    val likedReviews: List<Int> ? = null,
     @SerializedName("reviews")
     val reviews: List<Review>
 )
@@ -67,7 +76,7 @@ data class Comment(
     val likes: Int
 )
 
-data class AuthorCreator(val username: String, val firstname: String, val lastname: String)
+data class AuthorCreator(val username: String, val firstname: String, val lastname: String, val likedGames: List<Int> = emptyList(), val likedReviews: List<Int> = emptyList(), val likedComments: List<Int> = emptyList() )
 
 
 

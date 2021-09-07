@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -23,8 +24,11 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
+import com.example.ratingsapp.R
 import com.example.ratingsapp.components.ColumnWithDefaultMargin
 import com.example.ratingsapp.components.LoadingOverlay
 import com.example.ratingsapp.models.Game
@@ -40,7 +44,7 @@ import kotlinx.coroutines.launch
 @ExperimentalFoundationApi
 @ExperimentalCoilApi
 @Composable
-fun HomeScreen(mainVm:MainViewModel) {
+fun HomeScreen(mainVm:MainViewModel, navController: NavController) {
     val vm: HomeViewModel = viewModel()
     if (!vm.hasInit) {
         vm.init(mainVm)
@@ -55,7 +59,7 @@ fun HomeScreen(mainVm:MainViewModel) {
             LoadingOverlay()
         }
         else {
-            HomeGameList(games = games.value?: emptyList())
+            HomeGameList(games = games.value?: emptyList(),navController)
             if (error.value != null) {
                 ReloadSnackBar {
                     vm.load()
@@ -69,7 +73,7 @@ fun HomeScreen(mainVm:MainViewModel) {
 
 @ExperimentalCoilApi
 @Composable
-fun GameListItem(item: Game){
+fun GameListItem(item: Game, navController: NavController){
     Card(
         shape = RoundedCornerShape(10),
         modifier = Modifier
@@ -77,11 +81,11 @@ fun GameListItem(item: Game){
             .width(170.dp)
             .padding(4.dp)
             .clickable {
-                //TODO NAVIGATION TO DETAILS
+                navController.navigate("gameDetails/${item.id}")
             }) {
         Image(
             painter = rememberImagePainter(item.imageLink),
-            contentDescription = "My content description",
+            contentDescription = stringResource(R.string.game_cover_picture),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
@@ -92,7 +96,7 @@ fun GameListItem(item: Game){
 @Composable
 fun itemPreview(@PreviewParameter(GameListProvider::class) games: List<Game>){
     RatingsAppTheme {
-        GameListItem(item = games[0])
+        GameListItem(item = games[0], rememberNavController())
     }
 
 }
@@ -101,10 +105,10 @@ fun itemPreview(@PreviewParameter(GameListProvider::class) games: List<Game>){
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
 @Composable
-fun HomeGameList(games: List<Game>){
+fun HomeGameList(games: List<Game>, navController: NavController){
     LazyVerticalGrid(cells = GridCells.Adaptive(minSize = 150.dp)) {
         items(games) { game ->
-            GameListItem(item = game)
+            GameListItem(item = game, navController)
         }
     }
 

@@ -87,7 +87,7 @@ fun ProfileScreenContent(author: Author, reviews:List<Review>, vm:ProfileViewMod
 @Composable
 fun ProfilePreview(@PreviewParameter(ReviewListProvider::class) reviews: List<Review>){
     RatingsAppTheme {
-        ProfileScreenContent(Author(1, "test","test","tester", reviews), reviews, ProfileViewModel())
+        ProfileScreenContent(Author(1, "test","test","tester", reviews = reviews), reviews, ProfileViewModel())
     }
 }
 

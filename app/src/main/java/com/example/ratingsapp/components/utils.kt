@@ -23,9 +23,9 @@ import com.example.ratingsapp.ui.theme.RatingsAppTheme
 
 
 @Composable
-fun ColumnWithDefaultMargin(composable: @Composable () -> Unit) {
+fun ColumnWithDefaultMargin(modifier: Modifier = Modifier,composable: @Composable () -> Unit) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(dimensionResource(id = R.dimen.default_padding))
             .fillMaxSize()
     ) {

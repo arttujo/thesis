@@ -16,10 +16,15 @@
     <string name="profile">Profile</string>
 
     <string name="my_reviews">My Reviews</string>
+    <string name="reviews">Reviews</string>
+    <string name="no_reviews">This game no reviews</string>
 
     <string name="likes">Likes</string>
     <string name="review_by">By: %1$s</string>
 
+
+    <string name="game_title">Title</string>
+    <string name="game_studio">Studio</string>
 
     <string name="username_hint">Username</string>
     <string name="firstname_hint">Firstname</string>
@@ -43,7 +48,8 @@
     <string name="profile_tab">Profile</string>
 
     <string name="navigate_back">Back</string>
-
+    <string name="game_cover_picture">Game cover picture</string>
+    <string name="like">Like</string>
 
     <!-- other -->
     <string name="preference_file_key">myPrefsFileKey</string>

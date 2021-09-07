@@ -24,6 +24,7 @@ interface Cache {
     fun clear()
 }
 const val AUTHOR_CACHE_KEY = "AUTHOR_CACHE_KEY"
+const val GAME_CACHE_KEY = "GAME_CACHE_KEY"
 const val LOGIN_CACHE = "LOGIN_CACHE_KEY"
 
 class MainRepository(private val apiHelper: ApiHelper):Cache {
@@ -45,6 +46,7 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
         try {
             val response = apiHelper.getGames()
             if (response.isSuccessful) {
+                set(GAME_CACHE_KEY, response.body()!!)
                 return@withContext Result.Success(response.body()!!)
             } else {
                 return@withContext Result.Error(ApiError(response.code(),response.message()))
@@ -102,6 +104,19 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
             val response = apiHelper.deleteReview(id)
             if (response.isSuccessful) {
                 return@withContext Result.Success(null)
+            } else {
+                return@withContext Result.Error(ApiError(response.code(),response.message()))
+            }
+        } catch (e:Exception) {
+            return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
+        }
+    }
+
+    suspend fun getGameDetails(id:Int) = withContext(Dispatchers.IO) {
+        try {
+            val response = apiHelper.getGameDetails(id)
+            if (response.isSuccessful) {
+                return@withContext Result.Success(response.body()!!)
             } else {
                 return@withContext Result.Error(ApiError(response.code(),response.message()))
             }

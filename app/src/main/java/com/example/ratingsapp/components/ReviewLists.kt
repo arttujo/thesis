@@ -19,22 +19,29 @@ import com.example.ratingsapp.models.Review
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
 
 @Composable
-fun ReviewList(reviews: List<Review>, shownInProfile: Boolean, onRowClick: (id:Int)->Unit? = {}, onDeleteClick: (id: Int)-> Unit? = {}) {
+fun ReviewList(reviews: List<Review>, shownInProfile: Boolean, onRowClick: (id:Int)->Unit? = {}, onDeleteClick: (id: Int)-> Unit? = {}, columnModifier: Modifier = Modifier) {
     Column {
-        if (shownInProfile) {
-            Text(
-                text = stringResource(id = R.string.my_reviews),
-                modifier = Modifier.padding(bottom = 16.dp),
-                style = MaterialTheme.typography.h4
-            )
-        }
-        LazyColumn {
+
+
+
+        LazyColumn (modifier = columnModifier) {
+            item {
+                Text(
+                    text = stringResource(if (shownInProfile) R.string.my_reviews else R.string.reviews),
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    style = MaterialTheme.typography.h4
+                )
+            }
+
             items(reviews) { review ->
                 ReviewRow(review = review, onClick = { onRowClick(review.id) }, onDeleteClick = { onDeleteClick(review.id)}, isDelete = shownInProfile)
             }
         }
     }
 }
+
+
+
 
 @Preview(showSystemUi = true)
 @Composable

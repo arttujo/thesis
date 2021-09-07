@@ -44,7 +44,7 @@ fun NoActionTopBar() {
 }
 
 @Composable
-fun BackArrowTopBar(navController: NavController) {
+fun BackArrowTopBar(navController: NavController, showLike: Boolean = false, likeAction: () -> Unit = {}, hasLiked:Boolean? = null) {
 
     /**
      * Use this elsewhere
@@ -67,7 +67,16 @@ fun BackArrowTopBar(navController: NavController) {
                     id = R.string.navigate_back
                 ))
             }
-
+        },
+        actions = {
+            val liked = if (hasLiked == true) R.drawable.ic_liked else R.drawable.ic_like
+            if (hasLiked != null) {
+                IconButton(onClick = likeAction) {
+                    Icon(painter = painterResource(liked), contentDescription = stringResource(
+                        id = R.string.like
+                    ),tint = Color.Black )
+                }
+            }
         }
     )
 }
@@ -94,5 +103,20 @@ fun NoActionPreview(){
 fun BackButtonTopBar() {
     RatingsAppTheme {
         BackArrowTopBar(rememberNavController())
+    }
+}
+@Preview
+@Composable
+fun BackButtonTopBarWithLiked() {
+    RatingsAppTheme {
+        BackArrowTopBar(rememberNavController(),showLike = true, hasLiked = true)
+    }
+}
+
+@Preview
+@Composable
+fun BackButtonTopBarWithNotLiked() {
+    RatingsAppTheme {
+        BackArrowTopBar(rememberNavController(),showLike = true, hasLiked = false)
     }
 }

@@ -69,7 +69,17 @@ class MainViewModel(private val mainRepository: MainRepository, private val data
         }
     }
 
+    fun checkLikedGame(id: Int):Boolean {
+        return loggedInAs.value?.likedGames?.contains(id) ?: false
+    }
 
+    fun checkLikedReview(id: Int):Boolean {
+        return loggedInAs.value?.likedReviews?.contains(id) ?: false
+    }
+
+    fun checkLikedComment(id: Int):Boolean {
+        return loggedInAs.value?.likedComments?.contains(id) ?: false
+    }
 
 
 
