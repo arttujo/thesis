@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.ratingsapp.R
 import com.example.ratingsapp.components.*
@@ -53,7 +54,7 @@ fun GameDetailsScreen(mainViewModel: MainViewModel, navController: NavController
         }  else {
 
             if (game != null) {
-                GameDetailsContent(game!!, vm)
+                GameDetailsContent(game!!, navController)
             } else {
                 // TODO ERROR
             }
@@ -63,10 +64,10 @@ fun GameDetailsScreen(mainViewModel: MainViewModel, navController: NavController
 }
 
 /**
- * This is pretty much equivalent to ScrollView + RecyclerView with nested scrolling disabled in XML
+ * This is pretty much equivalent to ScrollView + RecyclerView with nested scrolling disabled
  */
 @Composable
-fun GameDetailsContent(game: Game, vm: GameDetailsViewModel) {
+fun GameDetailsContent(game: Game, navController: NavController) {
     ColumnWithDefaultMargin {
         LazyColumn() {
             item {
@@ -92,7 +93,7 @@ fun GameDetailsContent(game: Game, vm: GameDetailsViewModel) {
                     InfoRow(title = stringResource(id = R.string.reviews), value = "")
                 }
                 items(game.reviews) { review ->
-                    ReviewRow(review = review, onClick = { /** TODO **/ }, onDeleteClick = {}, isDelete = false)
+                    ReviewRow(review = review, onClick = { navController.navigate("reviewDetails/${review.id}") }, onDeleteClick = {}, isDelete = false)
                 }
 
             } else {
@@ -100,11 +101,6 @@ fun GameDetailsContent(game: Game, vm: GameDetailsViewModel) {
                     InfoRow(title = stringResource(id = R.string.reviews), value = stringResource(id = R.string.no_reviews))
                 }
             }
-
-
-
-            //ReviewList(reviews = game.reviews ?: emptyList(), shownInProfile = false)
-
         }
     }
 
@@ -131,6 +127,6 @@ fun InfoRowPreview() {
 @Composable
 fun GameDetailPreview(@PreviewParameter(GameListProvider::class) games: List<Game>) {
     RatingsAppTheme {
-        GameDetailsContent(games[0], GameDetailsViewModel())
+        GameDetailsContent(games[0], rememberNavController())
     }
 }

@@ -3,9 +3,7 @@ package com.example.ratingsapp.repositories
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.ratingsapp.api.ApiHelper
-import com.example.ratingsapp.models.Author
-import com.example.ratingsapp.models.AuthorCreator
-import com.example.ratingsapp.models.Game
+import com.example.ratingsapp.models.*
 import com.example.ratingsapp.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -125,6 +123,31 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
         }
     }
 
+    suspend fun getReviewDetails(id:Int) = withContext(Dispatchers.IO) {
+        try {
+            val response = apiHelper.getReviewDetails(id)
+            if (response.isSuccessful) {
+                return@withContext Result.Success(response.body()!!)
+            } else {
+                return@withContext Result.Error(ApiError(response.code(),response.message()))
+            }
+        } catch (e:Exception) {
+            return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
+        }
+    }
+
+    suspend fun newComment(creator: CommentCreator): Result<Comment> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiHelper.newComment(creator)
+            if (response.isSuccessful) {
+                return@withContext Result.Success(response.body()!!)
+            } else {
+                return@withContext Result.Error(ApiError(response.code(),response.message()))
+            }
+        } catch (e: Exception) {
+            return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
+        }
+    }
 
 
 

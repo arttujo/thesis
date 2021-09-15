@@ -37,7 +37,7 @@ fun ReviewRow(review: Review, isDelete: Boolean = false, onClick: () -> Unit, on
     val deleteWeight = if (isDelete) 0.85F else 1F //
     Row(
         modifier = Modifier
-            .height(80.dp).padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp).fillMaxWidth(),
+            .height(80.dp).padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp).fillMaxWidth().clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
 
     ) {
@@ -85,7 +85,7 @@ fun ReviewRow(review: Review, isDelete: Boolean = false, onClick: () -> Unit, on
  * Stating rating bar that shows the review score in stars
  */
 @Composable
-fun StaticRating(score: Int, modifier: Modifier) {
+fun StaticRating(score: Int, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,

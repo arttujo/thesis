@@ -42,9 +42,11 @@ import androidx.datastore.preferences.core.*
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import com.example.ratingsapp.features.details.GameDetailsScreen
+import com.example.ratingsapp.features.review.ReviewScreen
 
 
 const val GAME_ID = "GAME_ID"
+const val REVIEW_ID = "REVIEW_ID"
 
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
@@ -68,8 +70,11 @@ fun ApplicationRoot(mainVm: MainViewModel) {
             composable("login") { LoginScreen(navController, mainVm)}
             composable("register") { RegisterScreen(navController, mainVm) }
             composable("main") { MainScreen(navController,mainVm)}
-            composable("gameDetails/{GAME_ID}", arguments = listOf(navArgument(GAME_ID) {type = NavType.IntType }) ) {
+            composable("gameDetails/{$GAME_ID}", arguments = listOf(navArgument(GAME_ID) {type = NavType.IntType }) ) {
                 GameDetailsScreen(mainViewModel = mainVm, navController = navController, gameId = it.arguments?.getInt(GAME_ID))
+            }
+            composable("reviewDetails/{$REVIEW_ID}", arguments = listOf(navArgument(REVIEW_ID) {type = NavType.IntType})) {
+                ReviewScreen(mainViewModel = mainVm, navController = navController, reviewId = it.arguments?.getInt(REVIEW_ID))
             }
         }
     }

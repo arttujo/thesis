@@ -5,10 +5,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -17,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.ratingsapp.R
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
@@ -126,10 +124,52 @@ fun AlertDlg(confirmAction: () ->Unit, onDismiss: () -> Unit) {
     )
 }
 
-@Preview
 @Composable
-fun AlertPreview() {
+fun LimitedTextInput(charLimit: Int, hint: String,  modifier: Modifier, inputValue: String, onChange: (String) -> Unit) {
+   Column (modifier = modifier) {
+       TextField(
+           value = inputValue,
+           onValueChange = {
+               if (it.length<=charLimit) {
+                   onChange(it)
+               }
+           },
+           label = { Text(text = hint)},
+           modifier = Modifier.fillMaxWidth(),
+       )
+       Text(
+           text = "${inputValue.length} / $charLimit",
+           textAlign = TextAlign.End,
+           style = MaterialTheme.typography.caption,
+           modifier = Modifier.fillMaxWidth().padding(end = dimensionResource(id = R.dimen.default_padding))
+       )
+   }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewLimitedInput() {
     RatingsAppTheme() {
-        AlertDlg (onDismiss = {},confirmAction = {})
+        LimitedTextInput(
+            charLimit = 50,
+            hint ="Leave a Comment",
+            inputValue = "",
+            modifier= Modifier,
+            onChange = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewLimitedInput2() {
+    RatingsAppTheme() {
+        LimitedTextInput(
+            charLimit = 50,
+            hint ="Leave a Comment",
+            inputValue = "jgfkdjskgjfdksgjkdflsjgkdfsjgkldfs",
+            modifier= Modifier,
+            onChange = {}
+        )
     }
 }

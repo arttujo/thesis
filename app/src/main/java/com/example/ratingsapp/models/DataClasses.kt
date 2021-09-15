@@ -24,7 +24,10 @@ data class Review(
     @SerializedName("reviewScore")
     val reviewScore: Int,
     @SerializedName("likes")
-    val likes: Int )
+    val likes: Int,
+    @SerializedName("comments")
+    val comments: List<Comment>? = emptyList()
+    )
 
 data class Game(
     @SerializedName("id")
@@ -77,7 +80,7 @@ data class Comment(
 )
 
 data class AuthorCreator(val username: String, val firstname: String, val lastname: String, val likedGames: List<Int> = emptyList(), val likedReviews: List<Int> = emptyList(), val likedComments: List<Int> = emptyList() )
-
+data class CommentCreator(val reviewId: Int, val author: String, val authorId: Int, val comment: String, val likes: Int = 0)
 
 
 /**

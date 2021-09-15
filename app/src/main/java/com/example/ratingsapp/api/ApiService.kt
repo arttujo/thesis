@@ -1,8 +1,6 @@
 package com.example.ratingsapp.api
 
-import com.example.ratingsapp.models.Author
-import com.example.ratingsapp.models.AuthorCreator
-import com.example.ratingsapp.models.Game
+import com.example.ratingsapp.models.*
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -33,7 +31,11 @@ interface JsonApiService {
     @DELETE("reviews/{id}")
     suspend fun deleteReview(@Path("id") reviewId: Int): Response<Void>
 
+    @GET("reviews/{id}")
+    suspend fun getReviewDetails(@Path("id") reviewId: Int): Response<Review>
 
+    @POST("comments")
+    suspend fun newComment(@Body request: CommentCreator): Response<Comment>
 }
 
 
@@ -63,7 +65,10 @@ class ApiHelper(private val apiService: JsonApiService) {
 
     suspend fun getAuthors() = apiService.getAuthors()
     suspend fun login(id:Int) = apiService.login(id)
+
     suspend fun deleteReview(id: Int) = apiService.deleteReview(id)
+    suspend fun getReviewDetails(id: Int) = apiService.getReviewDetails(id)
 
     suspend fun postAuthors(creator: AuthorCreator) = apiService.registerUser(creator)
+    suspend fun newComment(creator: CommentCreator) = apiService.newComment(creator)
 }

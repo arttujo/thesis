@@ -15,11 +15,16 @@
     <string name="search">Search</string>
     <string name="profile">Profile</string>
 
+    <string name="comments_title">Comments</string>
+    <string name="leave_comment">Leave a comment</string>
+    <string name="send">Send</string>
+
     <string name="my_reviews">My Reviews</string>
     <string name="reviews">Reviews</string>
     <string name="no_reviews">This game no reviews</string>
 
     <string name="likes">Likes</string>
+    <string name="likes_num"> Likes: %1$s</string>
     <string name="review_by">By: %1$s</string>
 
 
