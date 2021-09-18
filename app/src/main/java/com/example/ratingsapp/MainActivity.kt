@@ -42,6 +42,7 @@ import androidx.datastore.preferences.core.*
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import com.example.ratingsapp.features.details.GameDetailsScreen
+import com.example.ratingsapp.features.review.NewReviewScreen
 import com.example.ratingsapp.features.review.ReviewScreen
 
 
@@ -75,6 +76,9 @@ fun ApplicationRoot(mainVm: MainViewModel) {
             }
             composable("reviewDetails/{$REVIEW_ID}", arguments = listOf(navArgument(REVIEW_ID) {type = NavType.IntType})) {
                 ReviewScreen(mainViewModel = mainVm, navController = navController, reviewId = it.arguments?.getInt(REVIEW_ID))
+            }
+            composable("newReview/{$GAME_ID}", arguments = listOf(navArgument(GAME_ID) {type = NavType.IntType})) {
+                NewReviewScreen(mainViewModel = mainVm, navController = navController, gameId = it.arguments?.getInt(GAME_ID))
             }
         }
     }

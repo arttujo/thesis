@@ -149,6 +149,19 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
         }
     }
 
+    suspend fun newReview(creator: ReviewCreator): Result<Review> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiHelper.newReview(creator)
+            if (response.isSuccessful) {
+                return@withContext Result.Success(response.body()!!)
+            } else {
+                return@withContext Result.Error(ApiError(response.code(),response.message()))
+            }
+        } catch (e: Exception) {
+            return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
+        }
+    }
+
 
 
 

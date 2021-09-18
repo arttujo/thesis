@@ -36,6 +36,10 @@ interface JsonApiService {
 
     @POST("comments")
     suspend fun newComment(@Body request: CommentCreator): Response<Comment>
+
+    @POST("reviews")
+    suspend fun newReview(@Body request: ReviewCreator): Response<Review>
+
 }
 
 
@@ -71,4 +75,6 @@ class ApiHelper(private val apiService: JsonApiService) {
 
     suspend fun postAuthors(creator: AuthorCreator) = apiService.registerUser(creator)
     suspend fun newComment(creator: CommentCreator) = apiService.newComment(creator)
+
+    suspend fun newReview(creator: ReviewCreator) = apiService.newReview(creator)
 }

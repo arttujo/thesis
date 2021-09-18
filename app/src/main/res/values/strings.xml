@@ -15,6 +15,11 @@
     <string name="search">Search</string>
     <string name="profile">Profile</string>
 
+    <string name="new_review">New Review</string>
+    <string name="write_review">Write a review</string>
+    <string name="title_hint">Title</string>
+    <string name="submit_review">Submit</string>
+
     <string name="comments_title">Comments</string>
     <string name="leave_comment">Leave a comment</string>
     <string name="send">Send</string>
