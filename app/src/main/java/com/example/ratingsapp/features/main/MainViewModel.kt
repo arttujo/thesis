@@ -9,15 +9,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.ratingsapp.PreferenceKeys
+import com.example.ratingsapp.api.RawgApiHelper
 import com.example.ratingsapp.models.Author
 import com.example.ratingsapp.repositories.MainRepository
+import com.example.ratingsapp.repositories.RawgRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val mainRepository: MainRepository, private val dataStore: DataStore<Preferences>):ViewModel() {
+class MainViewModel(private val mainRepository: MainRepository, private val dataStore: DataStore<Preferences>, private val rawgRepository: RawgRepository):ViewModel() {
 
     val repository = mainRepository
 

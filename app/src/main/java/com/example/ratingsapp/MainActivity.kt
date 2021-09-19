@@ -41,9 +41,12 @@ import java.lang.IllegalArgumentException
 import androidx.datastore.preferences.core.*
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
+import com.example.ratingsapp.api.RawgApiHelper
+import com.example.ratingsapp.api.RawgBuilder
 import com.example.ratingsapp.features.details.GameDetailsScreen
 import com.example.ratingsapp.features.review.NewReviewScreen
 import com.example.ratingsapp.features.review.ReviewScreen
+import com.example.ratingsapp.repositories.RawgRepository
 
 
 const val GAME_ID = "GAME_ID"
@@ -100,7 +103,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val viewModel = ViewModelProvider(this,ViewModelFactory(ApiHelper(RetrofitBuilder.apiService),applicationContext.prefsDataStore))
+        val viewModel = ViewModelProvider(this,ViewModelFactory(ApiHelper(RetrofitBuilder.apiService),applicationContext.prefsDataStore, RawgApiHelper(RawgBuilder.apiService)))
             .get(MainViewModel::class.java)
 
         setContent {
@@ -115,11 +118,11 @@ class MainActivity : ComponentActivity() {
 
 }
 
-class ViewModelFactory(private val apiHelper: ApiHelper, private val dataStore: DataStore<Preferences>) : ViewModelProvider.Factory {
+class ViewModelFactory(private val apiHelper: ApiHelper, private val dataStore: DataStore<Preferences>, private val rawgApiHelper: RawgApiHelper) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(MainRepository(apiHelper), dataStore) as T
+            return MainViewModel(MainRepository(apiHelper), dataStore, RawgRepository(rawgApiHelper)) as T
         }
         throw IllegalArgumentException("Unknown Class Name")
     }

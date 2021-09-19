@@ -1,16 +1,15 @@
 package com.example.ratingsapp.features.review
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,6 +47,7 @@ fun NewReviewScreenContent(vm: NewReviewViewModel) {
 
     val titleInput by vm.titleInput.observeAsState()
     val reviewInput by vm.reviewInput.observeAsState()
+    val rating by vm.reviewScore.observeAsState()
 
         ColumnWithDefaultMargin {
             Text(text = stringResource(id = R.string.write_review), style = MaterialTheme.typography.h4)
@@ -62,18 +62,58 @@ fun NewReviewScreenContent(vm: NewReviewViewModel) {
                 charLimit = 250,
                 hint = stringResource(id = R.string.new_review),
                 modifier = Modifier
-                    .padding(top = 16.dp)
-                    .height(200.dp),
+                    .padding(top = 16.dp),
                 inputValue = reviewInput!!,
                 onChange = { vm.onReviewInput(it) })
-            
-            Button(onClick = { vm.createReview() }, modifier = Modifier.fillMaxWidth()) {
+
+            RatingBar(score = rating!!)
+
+            Button(
+                onClick = { vm.createReview() },
+                modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
+                enabled = !titleInput.isNullOrEmpty() && !reviewInput.isNullOrEmpty() && rating!! > 0){
                 Text(text = stringResource(id = R.string.submit_review))
             }
 
         }
 
 }
+
+
+@Composable
+fun RatingBar(score: Int, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center){
+        for (i in 1..5) {
+
+            val iconMod = Modifier
+                .width(40.dp)
+                .height(40.dp).clickable {
+
+                }
+            if (i<=score) {
+                Icon(
+                    modifier = iconMod,
+                    painter = painterResource(id = R.drawable.ic_star),
+                    contentDescription = stringResource(id = R.string.star),
+                    tint = Color.Black
+                )
+            } else {
+                Icon(
+                    modifier = iconMod,
+                    painter = painterResource(id = R.drawable.ic_star),
+                    contentDescription = stringResource(id = R.string.star),
+                    tint = Color.LightGray
+                )
+            }
+        }
+    }
+}
+
+
+
 
 @Preview(showBackground = true)
 @Composable
@@ -88,6 +128,7 @@ class NewReviewViewModel: ViewModel() {
     private lateinit var mainViewModel: MainViewModel
     var gameId = MutableLiveData<Int>()
     var hasInit = false
+
     fun init (mainViewModel: MainViewModel, gameId: Int) {
         this.mainViewModel = mainViewModel
         this.gameId.value = gameId
@@ -97,11 +138,13 @@ class NewReviewViewModel: ViewModel() {
     val successEvent = MutableLiveData<Event<Boolean>>()
     val errorEvent = MutableLiveData<Event<Boolean>>()
 
-    val author = mainViewModel.loggedInAs.value
+    val author by lazy {
+        mainViewModel.loggedInAs.value
+    }
 
     val titleInput = MutableLiveData("")
 
-    val reviewScore = MutableLiveData<Int>()
+    val reviewScore = MutableLiveData<Int>().apply { value = 0 }
 
     fun onTitleInputChange(input: String) {
         titleInput.value = input

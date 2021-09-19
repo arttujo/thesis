@@ -3,6 +3,10 @@ plugins {
     id 'kotlin-android'
 }
 
+def apiKeyLoc = rootProject.file("local.properties")
+def apiKeyProperties = new Properties()
+apiKeyProperties.load(new FileInputStream(apiKeyLoc))
+
 android {
     compileSdk 31
 
@@ -12,6 +16,8 @@ android {
         targetSdk 31
         versionCode 1
         versionName "1.0"
+
+        buildConfigField "String", "RAWG_APIKEY", apiKeyProperties['RAWG_APIKEY']
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
