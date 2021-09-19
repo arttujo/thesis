@@ -87,3 +87,51 @@ data class ReviewCreator(val authorUsername: String, val authorId: Int, val game
  * RAWG.IO Model for games
  */
 
+data class RawgBaseResponse(
+    @SerializedName("count")
+    val count: Int,
+    @SerializedName("next")
+    val next: String,
+    @SerializedName("previous")
+    val previous: String,
+    @SerializedName("result")
+    val results: List<RawgGameData>)
+
+// We just grab a small sliver of data from the model
+data class RawgGameData(
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("background_image")
+    val backgroundImage: String,
+    @SerializedName("rating")
+    val rating: Float,
+    @SerializedName("released")
+    val released: String
+)
+
+
+data class RawgGameDetails(
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("description")
+    val description: String,
+    @SerializedName("released")
+    val released: String,
+    @SerializedName("rating")
+    val rating: Float,
+    @SerializedName("background_image")
+    val image: String,
+    @SerializedName("developers")
+    val developers: List<Developer>
+)
+
+data class Developer(
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("name")
+    val name: String,
+)
+
+

@@ -1,15 +1,25 @@
 package com.example.ratingsapp.api
 
 import com.example.ratingsapp.BuildConfig
+import com.example.ratingsapp.models.RawgBaseResponse
+import com.example.ratingsapp.models.RawgGameDetails
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.Response
+import retrofit2.http.Path
 
 interface RawgApiService {
 
-}
+    @GET("games")
+    suspend fun getGames(): Response<RawgBaseResponse>
 
+    @GET("games/{id}")
+    suspend fun getGameDetails(@Path("id") gameId: Int): Response<RawgGameDetails>
+
+}
 
 object RawgBuilder {
 
@@ -23,8 +33,6 @@ object RawgBuilder {
         chain.proceed(chain.request().newBuilder().url(url).build())
     }.build()
 
-
-
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -37,6 +45,10 @@ object RawgBuilder {
 
 }
 
-class RawgApiHelper(private val RawgApiService: RawgApiService) {
+class RawgApiHelper(private val rawgApiService: RawgApiService) {
+
+    suspend fun getGames() = rawgApiService.getGames()
+
+    suspend fun getGameDetails(id:Int) = rawgApiService.getGameDetails(id)
 
 }
