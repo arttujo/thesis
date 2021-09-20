@@ -20,6 +20,9 @@ interface RawgApiService {
     @GET("games/{id}")
     suspend fun getGameDetails(@Path("id") gameId: Int): Response<RawgGameDetails>
 
+    @GET("{link}")
+    suspend fun loadMore(@Path("link") link: String): Response<RawgBaseResponse>
+
 }
 
 object RawgBuilder {

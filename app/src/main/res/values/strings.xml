@@ -40,11 +40,14 @@
 
     <string name="game_title">Title</string>
     <string name="game_studio">Studio</string>
+    <string name="game_description">Description</string>
+    <string name="game_developers">Developers</string>
 
     <string name="username_hint">Username</string>
     <string name="firstname_hint">Firstname</string>
     <string name="lastname_hint">Lastname</string>
 
+    <string name="load_more">Load More</string>
 
     <string name="data_fetch_error">Fetching Data Failed!</string>
     <string name="successful_delete">Deleted Review!</string>

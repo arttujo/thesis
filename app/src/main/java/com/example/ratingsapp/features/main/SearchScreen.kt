@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -34,10 +35,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.example.ratingsapp.GAME_ID
 import com.example.ratingsapp.R
-import com.example.ratingsapp.components.ColumnWithDefaultMargin
-import com.example.ratingsapp.components.GenericClearableTextInput
-import com.example.ratingsapp.components.LoadingOverlay
-import com.example.ratingsapp.components.SearchTextInput
+import com.example.ratingsapp.components.*
 import com.example.ratingsapp.models.Game
 import com.example.ratingsapp.models.RawgBaseResponse
 import com.example.ratingsapp.models.RawgGameData
@@ -94,7 +92,8 @@ fun SearchContent(vm: SearchViewModel, navController: NavController) {
         if (hasQueried == true && gamesResult?.results.isNullOrEmpty()) {
             Text(text = stringResource(id = R.string.no_results), style = MaterialTheme.typography.h4)
         }
-        SearchGameList(games = gamesResult?.results ?: emptyList(), navController = navController )
+        SearchGameList(games = gamesResult?.results ?: emptyList(), navController = navController,
+            showLoadMore = (hasQueried==true && !gamesResult?.results.isNullOrEmpty()) && gamesResult?.next != null)
 
     }
 
@@ -145,12 +144,24 @@ fun RawgListItem(item: RawgGameData, navController: NavController){
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
 @Composable
-fun SearchGameList(games: List<RawgGameData>, navController: NavController){
+fun SearchGameList(games: List<RawgGameData>, navController: NavController, showLoadMore: Boolean = false){
 
     LazyVerticalGrid(cells = GridCells.Adaptive(minSize = 150.dp)) {
         items(games) { game ->
             RawgListItem(item = game, navController)
         }
+        // This is left undone
+        /*
+        item {
+            if (showLoadMore) {
+                Row(horizontalArrangement = Arrangement.Center) {
+                    Button(onClick = { /*TODO*/ }, Modifier.fillMaxWidth()) {
+                        Text(text = stringResource(id = R.string.load_more))
+                    }
+                }
+            }
+        }
+         */
     }
 
 }
@@ -179,6 +190,7 @@ class SearchViewModel: ViewModel() {
 
 
 
+
     fun search() {
         viewModelScope.launch {
             loading.value = true
@@ -194,6 +206,8 @@ class SearchViewModel: ViewModel() {
             loading.value = false
         }
     }
+
+
 
 
 }

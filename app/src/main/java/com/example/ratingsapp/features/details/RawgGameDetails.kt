@@ -1,8 +1,13 @@
 package com.example.ratingsapp.features.details
 
+import android.text.Html
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -57,28 +62,34 @@ fun RawgGameDetailsScreen(mainViewModel: MainViewModel, navController: NavContro
 fun RawgGameDetailsContent(vm: RawgGameDetailsViewModel) {
 
     val game by vm.data.observeAsState()
+    val scrollState = rememberScrollState()
 
     Log.d("DBGL", "$game")
 
-    ColumnWithDefaultMargin {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (game?.background_image!= null) {
-                Image(
-                    painter = rememberImagePainter(game?.background_image),
-                    contentDescription = stringResource(id = R.string.game_cover_picture),
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .height(300.dp)
-                        .fillMaxWidth()
-                )
-            } else {
-                Text(text = stringResource(id = R.string.no_image), style = MaterialTheme.typography.h4)
-            }
+    LazyColumn(Modifier.padding(16.dp)) {
+        item {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (game?.background_image!= null) {
+                    Image(
+                        painter = rememberImagePainter(game?.background_image),
+                        contentDescription = stringResource(id = R.string.game_cover_picture),
+                        modifier = Modifier
+                            .height(300.dp)
+                            .fillMaxWidth()
+                    )
+                } else {
+                    Text(text = stringResource(id = R.string.no_image), style = MaterialTheme.typography.h4)
+                }
 
+            }
+            InfoRow(title = stringResource(id = R.string.game_title), value = game?.name!!)
+            InfoRow(title = stringResource(id = R.string.game_developers), value = game?.developers!!.joinToString { it.name })
+            InfoRow(title = stringResource(id = R.string.game_description), value = Html.fromHtml(game?.description!!).toString())
         }
+        
     }
 }
 

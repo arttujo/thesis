@@ -91,7 +91,7 @@ data class RawgBaseResponse(
     @SerializedName("count")
     val count: Int,
     @SerializedName("next")
-    val next: String,
+    val next: String?,
     @SerializedName("previous")
     val previous: String,
     @SerializedName("results")
