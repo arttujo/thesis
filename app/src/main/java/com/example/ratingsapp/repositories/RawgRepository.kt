@@ -12,9 +12,9 @@ import java.lang.Exception
 class RawgRepository(private val apiHelper: RawgApiHelper) {
 
 
-    suspend fun getGames(): Result<RawgBaseResponse> = withContext(Dispatchers.IO) {
+    suspend fun getGames(search:String): Result<RawgBaseResponse> = withContext(Dispatchers.IO) {
         try {
-            val response = apiHelper.getGames()
+            val response = apiHelper.getGames(search)
             if (response.isSuccessful) {
                 return@withContext Result.Success(response.body()!!)
             } else {

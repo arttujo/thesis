@@ -94,7 +94,7 @@ data class RawgBaseResponse(
     val next: String,
     @SerializedName("previous")
     val previous: String,
-    @SerializedName("result")
+    @SerializedName("results")
     val results: List<RawgGameData>)
 
 // We just grab a small sliver of data from the model
@@ -104,7 +104,7 @@ data class RawgGameData(
     @SerializedName("name")
     val name: String,
     @SerializedName("background_image")
-    val backgroundImage: String,
+    val backgroundImage: String?,
     @SerializedName("rating")
     val rating: Float,
     @SerializedName("released")
@@ -122,7 +122,7 @@ data class RawgGameDetails(
     @SerializedName("rating")
     val rating: Float,
     @SerializedName("background_image")
-    val image: String,
+    val background_image: String?,
     @SerializedName("developers")
     val developers: List<Developer>
 )

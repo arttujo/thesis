@@ -19,9 +19,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val mainRepository: MainRepository, private val dataStore: DataStore<Preferences>, private val rawgRepository: RawgRepository):ViewModel() {
+class MainViewModel(mainRepository: MainRepository, dataStore: DataStore<Preferences>, rawgRepository: RawgRepository):ViewModel() {
 
     val repository = mainRepository
+    val rawgRepo = rawgRepository
 
     val store = dataStore
 

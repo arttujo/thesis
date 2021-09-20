@@ -43,7 +43,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import com.example.ratingsapp.api.RawgApiHelper
 import com.example.ratingsapp.api.RawgBuilder
+import com.example.ratingsapp.components.DoneScreen
 import com.example.ratingsapp.features.details.GameDetailsScreen
+import com.example.ratingsapp.features.details.RawgGameDetailsScreen
 import com.example.ratingsapp.features.review.NewReviewScreen
 import com.example.ratingsapp.features.review.ReviewScreen
 import com.example.ratingsapp.repositories.RawgRepository
@@ -51,6 +53,9 @@ import com.example.ratingsapp.repositories.RawgRepository
 
 const val GAME_ID = "GAME_ID"
 const val REVIEW_ID = "REVIEW_ID"
+const val NAV_DEST = "NAV_DEST"
+const val FORCE_RELOAD = "FORCE_RELOAD"
+const val INFO_TEXT = "INFO_TEXT"
 
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
@@ -77,15 +82,33 @@ fun ApplicationRoot(mainVm: MainViewModel) {
             composable("gameDetails/{$GAME_ID}", arguments = listOf(navArgument(GAME_ID) {type = NavType.IntType }) ) {
                 GameDetailsScreen(mainViewModel = mainVm, navController = navController, gameId = it.arguments?.getInt(GAME_ID))
             }
+
+            composable("rawgGameDetails/{$GAME_ID}", arguments = listOf(navArgument(GAME_ID) { type = NavType.IntType }) ) {
+                RawgGameDetailsScreen(mainViewModel = mainVm, navController = navController, gameId = it.arguments?.getInt(GAME_ID))
+            }
+
             composable("reviewDetails/{$REVIEW_ID}", arguments = listOf(navArgument(REVIEW_ID) {type = NavType.IntType})) {
                 ReviewScreen(mainViewModel = mainVm, navController = navController, reviewId = it.arguments?.getInt(REVIEW_ID))
             }
             composable("newReview/{$GAME_ID}", arguments = listOf(navArgument(GAME_ID) {type = NavType.IntType})) {
                 NewReviewScreen(mainViewModel = mainVm, navController = navController, gameId = it.arguments?.getInt(GAME_ID))
             }
+            composable("done?navDest={$NAV_DEST}&infoText={$INFO_TEXT}",arguments = listOf(
+                navArgument(NAV_DEST) {type = NavType.StringType},
+                navArgument(INFO_TEXT) {type= NavType.StringType}
+
+            )) {
+                DoneScreen(
+                    navController = navController,
+                    closeDest = it.arguments?.getString(NAV_DEST)!!,
+                    infoText = it.arguments?.getString(INFO_TEXT)!!,)
+            }
+
         }
     }
 }
+// return correctly formatted argument string for the done screen
+fun createDoneScreen(navDest:String, infoText: String) = "done?navDest=$navDest&infoText=$infoText"
 
 const val ARG_DATA_STORE = "ARG_DATA_STORE"
 val Context.prefsDataStore by preferencesDataStore(name = ARG_DATA_STORE) //preference datastore
@@ -130,6 +153,7 @@ class ViewModelFactory(private val apiHelper: ApiHelper, private val dataStore: 
 
 
 
+@ExperimentalAnimationApi
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
@@ -137,7 +161,7 @@ class ViewModelFactory(private val apiHelper: ApiHelper, private val dataStore: 
 @Composable
 fun MainScreen(navController: NavHostController, mainVm: MainViewModel) {
     val home = TabItem(R.drawable.ic_home,R.string.home, mainVm) { HomeScreen(mainVm, navController) }
-    val search = TabItem(R.drawable.ic_search, R.string.search,mainVm) { SearchScreen(mainVm)}
+    val search = TabItem(R.drawable.ic_search, R.string.search,mainVm) { SearchScreen(mainVm, navController)}
     val profile = TabItem(R.drawable.ic_profile, R.string.profile, mainVm) { ProfileScreen(mainVm)}
     val tabs = listOf(home,search,profile)
     val pagerState = rememberPagerState(pageCount = tabs.size)

@@ -1,11 +1,17 @@
 package com.example.ratingsapp.features.review
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.ratingsapp.R
 import com.example.ratingsapp.components.*
+import com.example.ratingsapp.createDoneScreen
 import com.example.ratingsapp.features.main.MainViewModel
 import com.example.ratingsapp.models.Review
 import com.example.ratingsapp.models.ReviewCreator
@@ -28,6 +35,7 @@ import com.example.ratingsapp.utils.Event
 import com.example.ratingsapp.utils.Result
 import kotlinx.coroutines.launch
 
+@ExperimentalAnimationApi
 @Composable
 fun NewReviewScreen(mainViewModel: MainViewModel, navController: NavController, gameId: Int?) {
 
@@ -36,8 +44,13 @@ fun NewReviewScreen(mainViewModel: MainViewModel, navController: NavController, 
         vm.init(mainViewModel, gameId!!)
     }
 
+    val success by vm.successEvent.observeAsState()
+
     Scaffold(topBar = { BackArrowTopBar(navController = navController) }) {
         NewReviewScreenContent(vm = vm)
+    }
+    if (success?.getContentIfNotHandled() == true) {
+        navController.navigate(createDoneScreen("gameDetails/${gameId}", stringResource(id = R.string.review_thanks)))
     }
 
 }
@@ -66,11 +79,15 @@ fun NewReviewScreenContent(vm: NewReviewViewModel) {
                 inputValue = reviewInput!!,
                 onChange = { vm.onReviewInput(it) })
 
-            RatingBar(score = rating!!)
+            RatingBar(score = rating!!, onSelect = {
+                vm.reviewScore.value = it
+            })
 
             Button(
                 onClick = { vm.createReview() },
-                modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp),
                 enabled = !titleInput.isNullOrEmpty() && !reviewInput.isNullOrEmpty() && rating!! > 0){
                 Text(text = stringResource(id = R.string.submit_review))
             }
@@ -81,7 +98,7 @@ fun NewReviewScreenContent(vm: NewReviewViewModel) {
 
 
 @Composable
-fun RatingBar(score: Int, modifier: Modifier = Modifier) {
+fun RatingBar(score: Int, modifier: Modifier = Modifier, onSelect: (score: Int) -> Unit) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -90,8 +107,9 @@ fun RatingBar(score: Int, modifier: Modifier = Modifier) {
 
             val iconMod = Modifier
                 .width(40.dp)
-                .height(40.dp).clickable {
-
+                .height(40.dp)
+                .noRippleClickable {
+                    onSelect(i)
                 }
             if (i<=score) {
                 Icon(

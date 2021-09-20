@@ -10,11 +10,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.Response
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface RawgApiService {
 
     @GET("games")
-    suspend fun getGames(): Response<RawgBaseResponse>
+    suspend fun getGames(@Query("search") search: String): Response<RawgBaseResponse>
 
     @GET("games/{id}")
     suspend fun getGameDetails(@Path("id") gameId: Int): Response<RawgGameDetails>
@@ -47,7 +48,7 @@ object RawgBuilder {
 
 class RawgApiHelper(private val rawgApiService: RawgApiService) {
 
-    suspend fun getGames() = rawgApiService.getGames()
+    suspend fun getGames(search: String) = rawgApiService.getGames(search)
 
     suspend fun getGameDetails(id:Int) = rawgApiService.getGameDetails(id)
 

@@ -6,6 +6,7 @@
     <string name="register_failed">Registration failed: Username taken</string>
     <string name="logout_confirmation">Are you sure you want to logout?</string>
     <string name="ok">OK</string>
+    <string name="close">Close</string>
     <string name="cancel">Cancel</string>
     <string name="remember">Remember Me</string>
 
@@ -15,8 +16,12 @@
     <string name="search">Search</string>
     <string name="profile">Profile</string>
 
+    <string name="no_image">No image or loading failed</string>
+    <string name="no_results">No results found</string>
+
     <string name="new_review">New Review</string>
     <string name="write_review">Write a review</string>
+    <string name="review_thanks">Thanks for the review!</string>
     <string name="title_hint">Title</string>
     <string name="submit_review">Submit</string>
 
