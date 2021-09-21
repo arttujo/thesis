@@ -38,12 +38,15 @@ import com.example.ratingsapp.ui.theme.RatingsAppTheme
 import com.example.ratingsapp.utils.Event
 import com.example.ratingsapp.utils.Result
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.math.roundToInt
 
 
 @Composable
-fun RawgGameDetailsScreen(mainViewModel: MainViewModel, navController: NavController, gameId:Int?) {
+fun RawgGameDetailsScreen(
+    mainViewModel: MainViewModel,
+    navController: NavController,
+    gameId: Int?
+) {
 
     val vm: RawgGameDetailsViewModel = viewModel()
     if (!vm.hasInit) {
@@ -53,30 +56,42 @@ fun RawgGameDetailsScreen(mainViewModel: MainViewModel, navController: NavContro
     val successEvent by vm.successEvent.observeAsState()
     val loading by vm.loading.observeAsState()
 
-    Scaffold(topBar = { BackArrowTopBar(navController, useX = true)}) {
-        if (loading==true) {
+    Scaffold(topBar = { BackArrowTopBar(navController, useX = true) }) {
+        if (loading == true) {
             LoadingOverlay()
         } else {
             RawgGameDetailsContent(vm)
         }
     }
 
-    when(matchEvent?.getContentIfNotHandled()) {
+    when (matchEvent?.getContentIfNotHandled()) {
         true -> {
-            Toast.makeText(LocalContext.current, stringResource(id = R.string.Cannot_add), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                LocalContext.current,
+                stringResource(id = R.string.Cannot_add),
+                Toast.LENGTH_SHORT
+            ).show()
         }
         false -> {
             vm.saveToBeReviewed()
         }
     }
 
-    when(successEvent?.getContentIfNotHandled()) {
+    when (successEvent?.getContentIfNotHandled()) {
         true -> {
-            navController.navigate(createDoneScreen(navDest =
-                "null",infoText = stringResource(id = R.string.game_added)))
+            navController.navigate(
+                createDoneScreen(
+                    navDest =
+                    "null", infoText = stringResource(id = R.string.game_added)
+                )
+            )
         }
         false -> {
-            Toast.makeText(LocalContext.current, stringResource(id = R.string.request_failed), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                LocalContext.current,
+                stringResource(id = R.string.request_failed),
+                Toast.LENGTH_SHORT
+            ).show()
 
         }
     }
@@ -97,7 +112,7 @@ fun RawgGameDetailsContent(vm: RawgGameDetailsViewModel) {
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                if (game?.background_image!= null) {
+                if (game?.background_image != null) {
                     Image(
                         painter = rememberImagePainter(game?.background_image),
                         contentDescription = stringResource(id = R.string.game_cover_picture),
@@ -106,23 +121,36 @@ fun RawgGameDetailsContent(vm: RawgGameDetailsViewModel) {
                             .fillMaxWidth()
                     )
                 } else {
-                    Text(text = stringResource(id = R.string.no_image), style = MaterialTheme.typography.h4)
+                    Text(
+                        text = stringResource(id = R.string.no_image),
+                        style = MaterialTheme.typography.h4
+                    )
                 }
 
             }
             InfoRow(title = stringResource(id = R.string.game_title), value = game?.name!!)
-            InfoRow(title = stringResource(id = R.string.game_developers), value = game?.developers!!.joinToString { it.name })
-            InfoRow(title = stringResource(id = R.string.game_description), value = Html.fromHtml(game?.description!!).toString())
-            Text(text = "${stringResource(id = R.string.score)}:", style = MaterialTheme.typography.h6)
+            InfoRow(
+                title = stringResource(id = R.string.game_developers),
+                value = game?.developers!!.joinToString { it.name })
+            InfoRow(
+                title = stringResource(id = R.string.game_description),
+                value = Html.fromHtml(game?.description!!).toString()
+            )
+            Text(
+                text = "${stringResource(id = R.string.score)}:",
+                style = MaterialTheme.typography.h6
+            )
             StaticRating(score = game?.rating?.roundToInt()!!)
-            Button(onClick = { vm.checkIfAdded() },
+            Button(
+                onClick = { vm.checkIfAdded() },
                 Modifier
                     .fillMaxWidth()
-                    .padding(top = 20.dp)) {
+                    .padding(top = 20.dp)
+            ) {
                 Text(text = stringResource(id = R.string.add_to_ratings))
             }
         }
-        
+
     }
 }
 
@@ -135,13 +163,13 @@ fun RawgDetailsPreview() {
 }
 
 
-class RawgGameDetailsViewModel: ViewModel() {
+class RawgGameDetailsViewModel : ViewModel() {
 
     private lateinit var mainViewModel: MainViewModel
     var hasInit = false
     val gameId = MutableLiveData<Int?>()
 
-    fun init(mainViewModel: MainViewModel,gameId: Int) {
+    fun init(mainViewModel: MainViewModel, gameId: Int) {
         this.mainViewModel = mainViewModel
         this.gameId.value = gameId
         getDetails()
@@ -171,10 +199,11 @@ class RawgGameDetailsViewModel: ViewModel() {
 
 
     val matchEvent = MutableLiveData<Event<Boolean>>()
+
     // If returns null there was an error
     fun checkIfAdded() {
         viewModelScope.launch {
-              when(val result = mainViewModel.repository.getGames(data.value?.name)) {
+            when (val result = mainViewModel.repository.getGames(data.value?.name)) {
                 is Result.Success -> {
                     matchEvent.postValue(Event(!result.data.isNullOrEmpty()))
                 }
@@ -185,10 +214,10 @@ class RawgGameDetailsViewModel: ViewModel() {
             }
         }
     }
-    
+
     val successEvent = MutableLiveData<Event<Boolean>>()
 
-     fun saveToBeReviewed() {
+    fun saveToBeReviewed() {
         val creator = GameCreator(
             title = data.value?.name!!,
             studio = data.value?.developers?.get(0)?.name ?: "No info",
@@ -197,20 +226,18 @@ class RawgGameDetailsViewModel: ViewModel() {
 
         viewModelScope.launch {
             loading.value = true
-             when(val result = mainViewModel.repository.postAuthors(creator)) {
-                    is Result.Success -> {
-                        successEvent.postValue(Event(true))
-                    }
-                    is Result.Error -> {
-                        successEvent.postValue(Event(false))
-                    }
+            when (val result = mainViewModel.repository.postAuthors(creator)) {
+                is Result.Success -> {
+                    successEvent.postValue(Event(true))
+                }
+                is Result.Error -> {
+                    successEvent.postValue(Event(false))
+                }
 
             }
             loading.value = false
         }
     }
-
-
 
 
 }

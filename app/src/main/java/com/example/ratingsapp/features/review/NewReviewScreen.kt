@@ -1,17 +1,11 @@
 package com.example.ratingsapp.features.review
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.expandVertically
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,10 +19,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.ratingsapp.R
-import com.example.ratingsapp.components.*
+import com.example.ratingsapp.components.BackArrowTopBar
+import com.example.ratingsapp.components.ColumnWithDefaultMargin
+import com.example.ratingsapp.components.LimitedTextInput
+import com.example.ratingsapp.components.noRippleClickable
 import com.example.ratingsapp.createDoneScreen
 import com.example.ratingsapp.features.main.MainViewModel
-import com.example.ratingsapp.models.Review
 import com.example.ratingsapp.models.ReviewCreator
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
 import com.example.ratingsapp.utils.Event
@@ -50,7 +46,12 @@ fun NewReviewScreen(mainViewModel: MainViewModel, navController: NavController, 
         NewReviewScreenContent(vm = vm)
     }
     if (success?.getContentIfNotHandled() == true) {
-        navController.navigate(createDoneScreen("gameDetails/${gameId}", stringResource(id = R.string.review_thanks)))
+        navController.navigate(
+            createDoneScreen(
+                "gameDetails/${gameId}",
+                stringResource(id = R.string.review_thanks)
+            )
+        )
     }
 
 }
@@ -62,37 +63,38 @@ fun NewReviewScreenContent(vm: NewReviewViewModel) {
     val reviewInput by vm.reviewInput.observeAsState()
     val rating by vm.reviewScore.observeAsState()
 
-        ColumnWithDefaultMargin {
-            Text(text = stringResource(id = R.string.write_review), style = MaterialTheme.typography.h4)
-            LimitedTextInput(
-                charLimit = 25,
-                hint = stringResource(id = R.string.title_hint),
-                modifier = Modifier.padding(top = 32.dp),
-                inputValue = titleInput!!,
-                onChange = { vm.onTitleInputChange(it) })
+    ColumnWithDefaultMargin {
+        Text(text = stringResource(id = R.string.write_review), style = MaterialTheme.typography.h4)
+        LimitedTextInput(
+            charLimit = 25,
+            hint = stringResource(id = R.string.title_hint),
+            modifier = Modifier.padding(top = 32.dp),
+            inputValue = titleInput!!,
+            onChange = { vm.onTitleInputChange(it) })
 
-            LimitedTextInput(
-                charLimit = 250,
-                hint = stringResource(id = R.string.new_review),
-                modifier = Modifier
-                    .padding(top = 16.dp),
-                inputValue = reviewInput!!,
-                onChange = { vm.onReviewInput(it) })
+        LimitedTextInput(
+            charLimit = 250,
+            hint = stringResource(id = R.string.new_review),
+            modifier = Modifier
+                .padding(top = 16.dp),
+            inputValue = reviewInput!!,
+            onChange = { vm.onReviewInput(it) })
 
-            RatingBar(score = rating!!, onSelect = {
-                vm.reviewScore.value = it
-            })
+        RatingBar(score = rating!!, onSelect = {
+            vm.reviewScore.value = it
+        })
 
-            Button(
-                onClick = { vm.createReview() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp),
-                enabled = !titleInput.isNullOrEmpty() && !reviewInput.isNullOrEmpty() && rating!! > 0){
-                Text(text = stringResource(id = R.string.submit_review))
-            }
-
+        Button(
+            onClick = { vm.createReview() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 32.dp),
+            enabled = !titleInput.isNullOrEmpty() && !reviewInput.isNullOrEmpty() && rating!! > 0
+        ) {
+            Text(text = stringResource(id = R.string.submit_review))
         }
+
+    }
 
 }
 
@@ -102,7 +104,8 @@ fun RatingBar(score: Int, modifier: Modifier = Modifier, onSelect: (score: Int) 
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center){
+        horizontalArrangement = Arrangement.Center
+    ) {
         for (i in 1..5) {
 
             val iconMod = Modifier
@@ -111,7 +114,7 @@ fun RatingBar(score: Int, modifier: Modifier = Modifier, onSelect: (score: Int) 
                 .noRippleClickable {
                     onSelect(i)
                 }
-            if (i<=score) {
+            if (i <= score) {
                 Icon(
                     modifier = iconMod,
                     painter = painterResource(id = R.drawable.ic_star),
@@ -131,8 +134,6 @@ fun RatingBar(score: Int, modifier: Modifier = Modifier, onSelect: (score: Int) 
 }
 
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun NewReviewPreview() {
@@ -141,13 +142,13 @@ fun NewReviewPreview() {
     }
 }
 
-class NewReviewViewModel: ViewModel() {
+class NewReviewViewModel : ViewModel() {
 
     private lateinit var mainViewModel: MainViewModel
     var gameId = MutableLiveData<Int>()
     var hasInit = false
 
-    fun init (mainViewModel: MainViewModel, gameId: Int) {
+    fun init(mainViewModel: MainViewModel, gameId: Int) {
         this.mainViewModel = mainViewModel
         this.gameId.value = gameId
         hasInit = true
@@ -181,7 +182,8 @@ class NewReviewViewModel: ViewModel() {
             gameId = gameId.value!!,
             body = reviewInput.value!!,
             title = titleInput.value!!,
-            reviewScore = reviewScore.value!!)
+            reviewScore = reviewScore.value!!
+        )
         viewModelScope.launch {
             when (mainViewModel.repository.newReview(newReview)) {
                 is Result.Success -> {

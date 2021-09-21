@@ -5,10 +5,10 @@ import com.example.ratingsapp.models.RawgBaseResponse
 import com.example.ratingsapp.models.RawgGameDetails
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import retrofit2.Response
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -31,11 +31,14 @@ object RawgBuilder {
 
     private val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
-    private val client = OkHttpClient.Builder().addInterceptor(interceptor).addInterceptor { chain ->
-        // Add requited API Key to every request made to RAWG.IO
-        val url = chain.request().url().newBuilder().addQueryParameter("key", BuildConfig.RAWG_APIKEY).build()
-        chain.proceed(chain.request().newBuilder().url(url).build())
-    }.build()
+    private val client =
+        OkHttpClient.Builder().addInterceptor(interceptor).addInterceptor { chain ->
+            // Add requited API Key to every request made to RAWG.IO
+            val url =
+                chain.request().url().newBuilder().addQueryParameter("key", BuildConfig.RAWG_APIKEY)
+                    .build()
+            chain.proceed(chain.request().newBuilder().url(url).build())
+        }.build()
 
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
@@ -53,6 +56,6 @@ class RawgApiHelper(private val rawgApiService: RawgApiService) {
 
     suspend fun getGames(search: String) = rawgApiService.getGames(search)
 
-    suspend fun getGameDetails(id:Int) = rawgApiService.getGameDetails(id)
+    suspend fun getGameDetails(id: Int) = rawgApiService.getGameDetails(id)
 
 }

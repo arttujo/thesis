@@ -1,13 +1,10 @@
 package com.example.ratingsapp.repositories
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.ratingsapp.api.ApiHelper
 import com.example.ratingsapp.models.*
 import com.example.ratingsapp.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 data class ApiError(val code: Int, val message: String?)
 
@@ -21,11 +18,12 @@ interface Cache {
     fun remove(key: Any): Any?
     fun clear()
 }
+
 const val AUTHOR_CACHE_KEY = "AUTHOR_CACHE_KEY"
 const val GAME_CACHE_KEY = "GAME_CACHE_KEY"
 const val LOGIN_CACHE = "LOGIN_CACHE_KEY"
 
-class MainRepository(private val apiHelper: ApiHelper):Cache {
+class MainRepository(private val apiHelper: ApiHelper) : Cache {
     private val cache = HashMap<Any, Any>()
     override val size: Int
         get() = cache.size
@@ -47,9 +45,9 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
                 set(GAME_CACHE_KEY, response.body()!!)
                 return@withContext Result.Success(response.body()!!)
             } else {
-                return@withContext Result.Error(ApiError(response.code(),response.message()))
+                return@withContext Result.Error(ApiError(response.code(), response.message()))
             }
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
         }
     }
@@ -60,23 +58,23 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
             if (response.isSuccessful) {
                 return@withContext Result.Success(response.body()!!)
             } else {
-                return@withContext Result.Error(ApiError(response.code(),response.message()))
+                return@withContext Result.Error(ApiError(response.code(), response.message()))
             }
         } catch (e: Exception) {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
         }
     }
 
-    suspend fun login(id:Int): Result<Author> = withContext(Dispatchers.IO) {
+    suspend fun login(id: Int): Result<Author> = withContext(Dispatchers.IO) {
         try {
             val response = apiHelper.login(id)
             if (response.isSuccessful) {
                 set(LOGIN_CACHE, response.body()!!)
                 return@withContext Result.Success(response.body()!!)
             } else {
-                return@withContext Result.Error(ApiError(response.code(),response.message()))
+                return@withContext Result.Error(ApiError(response.code(), response.message()))
             }
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
         }
     }
@@ -89,9 +87,9 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
                 set(AUTHOR_CACHE_KEY, response.body()!!)
                 return@withContext Result.Success(response.body()!!)
             } else {
-                return@withContext Result.Error(ApiError(response.code(),response.message()))
+                return@withContext Result.Error(ApiError(response.code(), response.message()))
             }
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
         }
     }
@@ -103,48 +101,48 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
             if (response.isSuccessful) {
                 return@withContext Result.Success(response.body()!!)
             } else {
-                return@withContext Result.Error(ApiError(response.code(),response.message()))
+                return@withContext Result.Error(ApiError(response.code(), response.message()))
             }
         } catch (e: Exception) {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
         }
     }
 
-    suspend fun deleteReview(id:Int) = withContext(Dispatchers.IO) {
+    suspend fun deleteReview(id: Int) = withContext(Dispatchers.IO) {
         try {
             val response = apiHelper.deleteReview(id)
             if (response.isSuccessful) {
                 return@withContext Result.Success(null)
             } else {
-                return@withContext Result.Error(ApiError(response.code(),response.message()))
+                return@withContext Result.Error(ApiError(response.code(), response.message()))
             }
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
         }
     }
 
-    suspend fun getGameDetails(id:Int) = withContext(Dispatchers.IO) {
+    suspend fun getGameDetails(id: Int) = withContext(Dispatchers.IO) {
         try {
             val response = apiHelper.getGameDetails(id)
             if (response.isSuccessful) {
                 return@withContext Result.Success(response.body()!!)
             } else {
-                return@withContext Result.Error(ApiError(response.code(),response.message()))
+                return@withContext Result.Error(ApiError(response.code(), response.message()))
             }
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
         }
     }
 
-    suspend fun getReviewDetails(id:Int) = withContext(Dispatchers.IO) {
+    suspend fun getReviewDetails(id: Int) = withContext(Dispatchers.IO) {
         try {
             val response = apiHelper.getReviewDetails(id)
             if (response.isSuccessful) {
                 return@withContext Result.Success(response.body()!!)
             } else {
-                return@withContext Result.Error(ApiError(response.code(),response.message()))
+                return@withContext Result.Error(ApiError(response.code(), response.message()))
             }
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
         }
     }
@@ -155,7 +153,7 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
             if (response.isSuccessful) {
                 return@withContext Result.Success(response.body()!!)
             } else {
-                return@withContext Result.Error(ApiError(response.code(),response.message()))
+                return@withContext Result.Error(ApiError(response.code(), response.message()))
             }
         } catch (e: Exception) {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
@@ -168,14 +166,12 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
             if (response.isSuccessful) {
                 return@withContext Result.Success(response.body()!!)
             } else {
-                return@withContext Result.Error(ApiError(response.code(),response.message()))
+                return@withContext Result.Error(ApiError(response.code(), response.message()))
             }
         } catch (e: Exception) {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
         }
     }
-
-
 
 
 }

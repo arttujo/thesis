@@ -1,7 +1,6 @@
 package com.example.ratingsapp.models
 
 import com.google.gson.annotations.SerializedName
-import java.lang.reflect.Array
 
 
 /**
@@ -12,7 +11,7 @@ data class Review(
     @SerializedName("id")
     val id: Int,
     @SerializedName("gameId")
-    val gameId:Int,
+    val gameId: Int,
     @SerializedName("authorId")
     val authorId: Int,
     @SerializedName("title")
@@ -27,7 +26,7 @@ data class Review(
     val likes: Int,
     @SerializedName("comments")
     val comments: List<Comment>? = emptyList()
-    )
+)
 
 data class Game(
     @SerializedName("id")
@@ -41,7 +40,7 @@ data class Game(
     @SerializedName("likes")
     val likes: Int,
     @SerializedName("reviews")
-    val reviews: List<Review> ? = emptyList()
+    val reviews: List<Review>? = emptyList()
 )
 
 
@@ -57,9 +56,9 @@ data class Author(
     @SerializedName("likedGames")
     val likedGames: List<Int>? = null,
     @SerializedName("likedComments")
-    val likedComments: List<Int> ? = null,
+    val likedComments: List<Int>? = null,
     @SerializedName("likedReviews")
-    val likedReviews: List<Int> ? = null,
+    val likedReviews: List<Int>? = null,
     @SerializedName("reviews")
     val reviews: List<Review>
 )
@@ -79,10 +78,40 @@ data class Comment(
     val likes: Int
 )
 
-data class AuthorCreator(val username: String, val firstname: String, val lastname: String, val likedGames: List<Int> = emptyList(), val likedReviews: List<Int> = emptyList(), val likedComments: List<Int> = emptyList() )
-data class CommentCreator(val reviewId: Int, val author: String, val authorId: Int, val comment: String, val likes: Int = 0)
-data class ReviewCreator(val authorUsername: String, val authorId: Int, val gameId: Int, val body: String, val title: String, val reviewScore: Int,val likes: Int = 0 )
-data class GameCreator(val title: String, val studio: String, val imageLink: String, val likes: Int = 0)
+data class AuthorCreator(
+    val username: String,
+    val firstname: String,
+    val lastname: String,
+    val likedGames: List<Int> = emptyList(),
+    val likedReviews: List<Int> = emptyList(),
+    val likedComments: List<Int> = emptyList()
+)
+
+data class CommentCreator(
+    val reviewId: Int,
+    val author: String,
+    val authorId: Int,
+    val comment: String,
+    val likes: Int = 0
+)
+
+data class ReviewCreator(
+    val authorUsername: String,
+    val authorId: Int,
+    val gameId: Int,
+    val body: String,
+    val title: String,
+    val reviewScore: Int,
+    val likes: Int = 0
+)
+
+data class GameCreator(
+    val title: String,
+    val studio: String,
+    val imageLink: String,
+    val likes: Int = 0
+)
+
 /**
  * RAWG.IO Model for games
  */
@@ -95,7 +124,8 @@ data class RawgBaseResponse(
     @SerializedName("previous")
     val previous: String,
     @SerializedName("results")
-    val results: List<RawgGameData>)
+    val results: List<RawgGameData>
+)
 
 // We just grab a small sliver of data from the model
 data class RawgGameData(

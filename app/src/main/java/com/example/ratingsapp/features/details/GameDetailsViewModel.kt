@@ -5,13 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ratingsapp.features.main.MainViewModel
 import com.example.ratingsapp.models.Game
-import com.example.ratingsapp.models.Review
 import com.example.ratingsapp.repositories.ApiError
 import com.example.ratingsapp.utils.Event
 import com.example.ratingsapp.utils.Result
 import kotlinx.coroutines.launch
 
-class GameDetailsViewModel:ViewModel() {
+class GameDetailsViewModel : ViewModel() {
 
 
     lateinit var mainViewModel: MainViewModel
@@ -27,7 +26,6 @@ class GameDetailsViewModel:ViewModel() {
     }
 
 
-
     val game = MutableLiveData<Game>()
     val loading = MutableLiveData<Boolean>().apply { value = false }
     val error = MutableLiveData<ApiError>().apply { value = null }
@@ -36,7 +34,7 @@ class GameDetailsViewModel:ViewModel() {
     fun loadGameDetails() {
         viewModelScope.launch {
             loading.value = true
-            when(val _game = mainViewModel.repository.getGameDetails(gameId.value!!)) {
+            when (val _game = mainViewModel.repository.getGameDetails(gameId.value!!)) {
                 is Result.Success -> {
                     game.value = _game.data!!
                 }
@@ -49,8 +47,6 @@ class GameDetailsViewModel:ViewModel() {
         }
 
     }
-
-
 
 
 }

@@ -31,14 +31,12 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.example.ratingsapp.GAME_ID
 import com.example.ratingsapp.R
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
 
 
-
 // Extension function to for making a clickable without it having the ripple effect
-inline fun Modifier.noRippleClickable(crossinline onClick: ()->Unit): Modifier = composed {
+inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier = composed {
     clickable(indication = null,
         interactionSource = remember { MutableInteractionSource() }) {
         onClick()
@@ -46,7 +44,7 @@ inline fun Modifier.noRippleClickable(crossinline onClick: ()->Unit): Modifier =
 }
 
 @Composable
-fun ColumnWithDefaultMargin(modifier: Modifier = Modifier,composable: @Composable () -> Unit) {
+fun ColumnWithDefaultMargin(modifier: Modifier = Modifier, composable: @Composable () -> Unit) {
     Column(
         modifier = modifier
             .padding(dimensionResource(id = R.dimen.default_padding))
@@ -134,7 +132,7 @@ fun SearchTextInput(
         modifier = modifier ?: Modifier,
         label = { Text(text = hint) },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search), // Change soft keyboard to have have search icon
-        keyboardActions = KeyboardActions(onSearch = {onClick()})        // onSearch can be used to handle the click event
+        keyboardActions = KeyboardActions(onSearch = { onClick() })        // onSearch can be used to handle the click event
     )
 }
 
@@ -154,7 +152,7 @@ fun ClearInput() {
 
 
 @Composable
-fun AlertDlg(confirmAction: () ->Unit, onDismiss: () -> Unit) {
+fun AlertDlg(confirmAction: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = { onDismiss() },
         title = { Text(text = stringResource(id = R.string.logout_confirmation)) },
@@ -177,27 +175,33 @@ fun AlertDlg(confirmAction: () ->Unit, onDismiss: () -> Unit) {
 }
 
 @Composable
-fun LimitedTextInput(charLimit: Int, hint: String,  modifier: Modifier, inputValue: String, onChange: (String) -> Unit) {
-   Column (modifier = modifier) {
-       TextField(
-           value = inputValue,
-           onValueChange = {
-               if (it.length<=charLimit) {
-                   onChange(it)
-               }
-           },
-           label = { Text(text = hint)},
-           modifier = Modifier.fillMaxWidth(),
-       )
-       Text(
-           text = "${inputValue.length} / $charLimit",
-           textAlign = TextAlign.End,
-           style = MaterialTheme.typography.caption,
-           modifier = Modifier
-               .fillMaxWidth()
-               .padding(end = dimensionResource(id = R.dimen.default_padding))
-       )
-   }
+fun LimitedTextInput(
+    charLimit: Int,
+    hint: String,
+    modifier: Modifier,
+    inputValue: String,
+    onChange: (String) -> Unit
+) {
+    Column(modifier = modifier) {
+        TextField(
+            value = inputValue,
+            onValueChange = {
+                if (it.length <= charLimit) {
+                    onChange(it)
+                }
+            },
+            label = { Text(text = hint) },
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Text(
+            text = "${inputValue.length} / $charLimit",
+            textAlign = TextAlign.End,
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = dimensionResource(id = R.dimen.default_padding))
+        )
+    }
 }
 
 @Preview(showBackground = true)
@@ -206,9 +210,9 @@ fun PreviewLimitedInput() {
     RatingsAppTheme() {
         LimitedTextInput(
             charLimit = 50,
-            hint ="Leave a Comment",
+            hint = "Leave a Comment",
             inputValue = "",
-            modifier= Modifier,
+            modifier = Modifier,
             onChange = {}
         )
     }
@@ -220,9 +224,9 @@ fun PreviewLimitedInput2() {
     RatingsAppTheme() {
         LimitedTextInput(
             charLimit = 50,
-            hint ="Leave a Comment",
+            hint = "Leave a Comment",
             inputValue = "jgfkdjskgjfdksgjkdflsjgkdfsjgkldfs",
-            modifier= Modifier,
+            modifier = Modifier,
             onChange = {}
         )
     }
@@ -241,31 +245,35 @@ fun DoneScreen(navController: NavController, closeDest: String, infoText: String
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround
     ) {
-        Box (modifier = Modifier
-            .width(200.dp)
-            .height(200.dp)) {
+        Box(
+            modifier = Modifier
+                .width(200.dp)
+                .height(200.dp)
+        ) {
             LottieAnimation(
                 composition,
                 progress,
             )
         }
-        if(infoText != null) {
-            Text(text = infoText ,style = MaterialTheme.typography.h4)
+        if (infoText != null) {
+            Text(text = infoText, style = MaterialTheme.typography.h4)
         }
 
         /**
          * PopBackStack with the destination wouldn't work so we need do this
          * horrible thing to get the desired effect...
          */
-        Button(onClick = {
-            navController.popBackStack("main", false).also {
-                if (it && closeDest != "null") {
-                    navController.navigate(closeDest)
+        Button(
+            onClick = {
+                navController.popBackStack("main", false).also {
+                    if (it && closeDest != "null") {
+                        navController.navigate(closeDest)
+                    }
                 }
-            }
 
-                         },
-            Modifier.fillMaxWidth()) {
+            },
+            Modifier.fillMaxWidth()
+        ) {
             Text(text = stringResource(id = R.string.close))
         }
     }
@@ -275,6 +283,10 @@ fun DoneScreen(navController: NavController, closeDest: String, infoText: String
 @Composable
 fun DonePreview() {
     RatingsAppTheme {
-        DoneScreen(rememberNavController(),"dsadas", infoText = stringResource(id = R.string.review_thanks))
+        DoneScreen(
+            rememberNavController(),
+            "dsadas",
+            infoText = stringResource(id = R.string.review_thanks)
+        )
     }
 }

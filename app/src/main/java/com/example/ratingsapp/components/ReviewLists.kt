@@ -1,6 +1,5 @@
 package com.example.ratingsapp.components
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,17 +13,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.ratingsapp.R
-import com.example.ratingsapp.utils.ReviewListProvider
 import com.example.ratingsapp.models.Review
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
+import com.example.ratingsapp.utils.ReviewListProvider
 
 @Composable
-fun ReviewList(reviews: List<Review>, shownInProfile: Boolean, onRowClick: (id:Int)->Unit? = {}, onDeleteClick: (id: Int)-> Unit? = {}, columnModifier: Modifier = Modifier) {
+fun ReviewList(
+    reviews: List<Review>,
+    shownInProfile: Boolean,
+    onRowClick: (id: Int) -> Unit? = {},
+    onDeleteClick: (id: Int) -> Unit? = {},
+    columnModifier: Modifier = Modifier
+) {
     Column {
 
 
-
-        LazyColumn (modifier = columnModifier) {
+        LazyColumn(modifier = columnModifier) {
             item {
                 Text(
                     text = stringResource(if (shownInProfile) R.string.my_reviews else R.string.reviews),
@@ -34,13 +38,16 @@ fun ReviewList(reviews: List<Review>, shownInProfile: Boolean, onRowClick: (id:I
             }
 
             items(reviews) { review ->
-                ReviewRow(review = review, onClick = { onRowClick(review.id) }, onDeleteClick = { onDeleteClick(review.id)}, isDelete = shownInProfile)
+                ReviewRow(
+                    review = review,
+                    onClick = { onRowClick(review.id) },
+                    onDeleteClick = { onDeleteClick(review.id) },
+                    isDelete = shownInProfile
+                )
             }
         }
     }
 }
-
-
 
 
 @Preview(showSystemUi = true)

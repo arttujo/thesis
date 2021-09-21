@@ -1,11 +1,11 @@
 package com.example.ratingsapp.features.login_register
 
-import android.content.Context
 import android.util.Log
-import androidx.datastore.preferences.core.edit
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.example.ratingsapp.PreferenceKeys
 import com.example.ratingsapp.features.main.MainViewModel
 import com.example.ratingsapp.models.Author
 import com.example.ratingsapp.models.AuthorCreator
@@ -13,7 +13,6 @@ import com.example.ratingsapp.repositories.AUTHOR_CACHE_KEY
 import com.example.ratingsapp.repositories.ApiError
 import com.example.ratingsapp.utils.Event
 import com.example.ratingsapp.utils.Result
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -42,7 +41,7 @@ class LoginViewModel : ViewModel() {
             loading.value = true
             when (val result = mainViewModel.repository.getAuthors()) {
                 is Result.Success -> {
-                   authors.value = result.data ?: emptyList()
+                    authors.value = result.data ?: emptyList()
                 }
                 is Result.Error -> {
                     _errorEvent.value = Event(true)
@@ -62,7 +61,7 @@ class LoginViewModel : ViewModel() {
         }
         if (match != null) {
             viewModelScope.launch {
-               when(val login = mainViewModel.repository.login(match.id)) {
+                when (val login = mainViewModel.repository.login(match.id)) {
                     is Result.Success -> {
                         mainViewModel.saveLogin(login.data)
                         navController.navigate("main") {
@@ -90,8 +89,6 @@ class LoginViewModel : ViewModel() {
     fun onInputChange(newInput: String) {
         _username.value = newInput
     }
-
-
 
 
 }
@@ -148,9 +145,9 @@ class RegisterViewModel : ViewModel() {
      * Another mock. This would normally be done in the backend but JSONServer cannot do validation
      * so we do it client side
      */
-    private fun validUsername(author: AuthorCreator):Boolean {
-       val exists = cachedAuthors?.firstOrNull {
-           it.username == author.username
+    private fun validUsername(author: AuthorCreator): Boolean {
+        val exists = cachedAuthors?.firstOrNull {
+            it.username == author.username
         }
         Log.d("DBGL", "$exists")
         return exists == null

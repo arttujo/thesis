@@ -3,23 +3,26 @@ package com.example.ratingsapp.features.main
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import com.example.ratingsapp.utils.*
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.ratingsapp.PreferenceKeys
-import com.example.ratingsapp.api.RawgApiHelper
 import com.example.ratingsapp.models.Author
 import com.example.ratingsapp.repositories.MainRepository
 import com.example.ratingsapp.repositories.RawgRepository
+import com.example.ratingsapp.utils.Event
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class MainViewModel(mainRepository: MainRepository, dataStore: DataStore<Preferences>, rawgRepository: RawgRepository):ViewModel() {
+class MainViewModel(
+    mainRepository: MainRepository,
+    dataStore: DataStore<Preferences>,
+    rawgRepository: RawgRepository
+) : ViewModel() {
 
     val repository = mainRepository
     val rawgRepo = rawgRepository
@@ -39,8 +42,8 @@ class MainViewModel(mainRepository: MainRepository, dataStore: DataStore<Prefere
 
         viewModelScope.launch {
             loginData.collect {
-                if (it != "")  {
-                   loggedInAs.value = Gson().fromJson(it, Author::class.java)
+                if (it != "") {
+                    loggedInAs.value = Gson().fromJson(it, Author::class.java)
                 } else {
                     loggedInAs.value = null
                 }
@@ -49,7 +52,7 @@ class MainViewModel(mainRepository: MainRepository, dataStore: DataStore<Prefere
     }
 
 
-    fun logout(navController: NavController,) {
+    fun logout(navController: NavController) {
         viewModelScope.launch {
             removeLogin().apply {
                 navController.navigate("login") {
@@ -72,19 +75,17 @@ class MainViewModel(mainRepository: MainRepository, dataStore: DataStore<Prefere
         }
     }
 
-    fun checkLikedGame(id: Int):Boolean {
+    fun checkLikedGame(id: Int): Boolean {
         return loggedInAs.value?.likedGames?.contains(id) ?: false
     }
 
-    fun checkLikedReview(id: Int):Boolean {
+    fun checkLikedReview(id: Int): Boolean {
         return loggedInAs.value?.likedReviews?.contains(id) ?: false
     }
 
-    fun checkLikedComment(id: Int):Boolean {
+    fun checkLikedComment(id: Int): Boolean {
         return loggedInAs.value?.likedComments?.contains(id) ?: false
     }
-
-
 
 
 }

@@ -2,7 +2,6 @@ package com.example.ratingsapp.api
 
 import com.example.ratingsapp.models.*
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -12,7 +11,7 @@ import retrofit2.http.*
 
 interface JsonApiService {
     @GET("games")
-    suspend fun getGames(@Query("q") search: String? = null) : Response<List<Game>>
+    suspend fun getGames(@Query("q") search: String? = null): Response<List<Game>>
 
     @POST("games")
     suspend fun postGame(@Body request: GameCreator): Response<Game>
@@ -24,7 +23,7 @@ interface JsonApiService {
 
     // fake login -> try to fetch the user details
     @GET("authors/{id}")
-    suspend fun login(@Path("id") authorId:Int): Response<Author>
+    suspend fun login(@Path("id") authorId: Int): Response<Author>
 
     @POST("authors")
     suspend fun registerUser(@Body request: AuthorCreator): Response<Author>
@@ -74,7 +73,7 @@ class ApiHelper(private val apiService: JsonApiService) {
     suspend fun postGame(game: GameCreator) = apiService.postGame(game)
 
     suspend fun getAuthors() = apiService.getAuthors()
-    suspend fun login(id:Int) = apiService.login(id)
+    suspend fun login(id: Int) = apiService.login(id)
 
     suspend fun deleteReview(id: Int) = apiService.deleteReview(id)
     suspend fun getReviewDetails(id: Int) = apiService.getReviewDetails(id)

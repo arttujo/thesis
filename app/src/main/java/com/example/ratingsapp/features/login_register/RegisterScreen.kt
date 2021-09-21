@@ -24,42 +24,44 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.ratingsapp.R
-import com.example.ratingsapp.api.ApiHelper
-import com.example.ratingsapp.api.JsonApiService
 import com.example.ratingsapp.components.BackArrowTopBar
 import com.example.ratingsapp.components.ColumnWithDefaultMargin
 import com.example.ratingsapp.components.GenericClearableTextInput
 import com.example.ratingsapp.features.main.MainViewModel
-import com.example.ratingsapp.repositories.MainRepository
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
 
 
 @ExperimentalAnimationApi
 @Composable
-fun RegisterScreen(navController: NavController, mainVm: MainViewModel){
+fun RegisterScreen(navController: NavController, mainVm: MainViewModel) {
     val vm: RegisterViewModel = viewModel()
     if (!vm.hasInit) vm.init(mainViewModel = mainVm)
     val cached = vm.cachedAuthors
-    Log.d("DBGL","cache: $cached")
+    Log.d("DBGL", "cache: $cached")
     RegisterScreenContent(navController = navController, vm = vm)
 }
 
 @ExperimentalAnimationApi
 @Composable
-fun RegisterScreenContent(navController: NavController, vm: RegisterViewModel){
+fun RegisterScreenContent(navController: NavController, vm: RegisterViewModel) {
     val focusManager = LocalFocusManager.current
     val errorEvent by vm.errorEvent.observeAsState()
 
     errorEvent?.getContentIfNotHandled().let {
         if (it == true) {
-            Toast.makeText(LocalContext.current, stringResource(id =R.string.register_failed), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                LocalContext.current,
+                stringResource(id = R.string.register_failed),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
     Scaffold(
         topBar = { BackArrowTopBar(navController = navController) },
         modifier = Modifier
-            .fillMaxSize()){
+            .fillMaxSize()
+    ) {
         ColumnWithDefaultMargin {
             Text(
                 text = stringResource(id = R.string.register_title),
@@ -75,7 +77,7 @@ fun RegisterScreenContent(navController: NavController, vm: RegisterViewModel){
                     .fillMaxWidth()
                     .padding(bottom = dimensionResource(id = R.dimen.default_padding)),
                 inputValue = vm.firstname.observeAsState("").value,
-                onChange = {vm.onFNInputChange(it)},
+                onChange = { vm.onFNInputChange(it) },
                 onClear = { vm.clearFirstname() }
             )
 
@@ -86,8 +88,8 @@ fun RegisterScreenContent(navController: NavController, vm: RegisterViewModel){
                     .fillMaxWidth()
                     .padding(bottom = dimensionResource(id = R.dimen.default_padding)),
                 inputValue = vm.lastname.observeAsState("").value,
-                onChange = {vm.onLNInputChange(it)},
-                onClear = {vm.clearLastname()}
+                onChange = { vm.onLNInputChange(it) },
+                onClear = { vm.clearLastname() }
             )
             GenericClearableTextInput(
                 hint = stringResource(id = R.string.username_hint),
@@ -96,24 +98,23 @@ fun RegisterScreenContent(navController: NavController, vm: RegisterViewModel){
                     .fillMaxWidth()
                     .padding(bottom = dimensionResource(id = R.dimen.default_padding_double)),
                 inputValue = vm.username.observeAsState("").value,
-                onChange = {vm.onUNInputChange(it)},
-                onClear = {vm.clearUsername()}
+                onChange = { vm.onUNInputChange(it) },
+                onClear = { vm.clearUsername() }
             )
 
             Button(
                 onClick = {
                     focusManager.clearFocus()
                     vm.onRegisterClick(navController)
-                          },
-                modifier = Modifier.fillMaxWidth()) {
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(text = stringResource(id = R.string.register_title))
             }
 
         }
     }
 }
-
-
 
 
 @ExperimentalAnimationApi

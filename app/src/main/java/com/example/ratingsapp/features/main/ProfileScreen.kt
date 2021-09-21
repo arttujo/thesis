@@ -48,7 +48,6 @@ fun ProfileScreen(mainVm: MainViewModel, navController: NavController) {
     }
 
 
-
     val reviews by vm.reviews.observeAsState()
     val deleteEvent by vm.deleteEvent.observeAsState()
 
@@ -60,25 +59,45 @@ fun ProfileScreen(mainVm: MainViewModel, navController: NavController) {
 
     deleteEvent?.getContentIfNotHandled().let {
         if (it == true) {
-            Toast.makeText(LocalContext.current, stringResource(id = R.string.successful_delete), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                LocalContext.current,
+                stringResource(id = R.string.successful_delete),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
-
 
 
 }
 
 
 @Composable
-fun ProfileScreenContent(author: Author, reviews:List<Review>, vm:ProfileViewModel, navController: NavController) {
+fun ProfileScreenContent(
+    author: Author,
+    reviews: List<Review>,
+    vm: ProfileViewModel,
+    navController: NavController
+) {
     val loading by vm.loading.observeAsState()
 
     ColumnWithDefaultMargin {
-        Text(text = author.username, style = MaterialTheme.typography.h3, modifier = Modifier.padding(top = 8.dp))
-        Text(text = author.firstname, style = MaterialTheme.typography.h5, modifier = Modifier.padding(top = 16.dp))
-        Text(text = author.lastname, style = MaterialTheme.typography.h5, modifier = Modifier.padding(bottom = 16.dp))
+        Text(
+            text = author.username,
+            style = MaterialTheme.typography.h3,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+        Text(
+            text = author.firstname,
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier.padding(top = 16.dp)
+        )
+        Text(
+            text = author.lastname,
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-        SwipeRefresh( state = rememberSwipeRefreshState(loading == true),
+        SwipeRefresh(state = rememberSwipeRefreshState(loading == true),
             onRefresh = { vm.loadReviews(author.id) }) {
             ReviewList(
                 reviews = reviews,
@@ -98,13 +117,18 @@ fun ProfileScreenContent(author: Author, reviews:List<Review>, vm:ProfileViewMod
 
 @Preview(showSystemUi = true)
 @Composable
-fun ProfilePreview(@PreviewParameter(ReviewListProvider::class) reviews: List<Review>){
+fun ProfilePreview(@PreviewParameter(ReviewListProvider::class) reviews: List<Review>) {
     RatingsAppTheme {
-        ProfileScreenContent(Author(1, "test","test","tester", reviews = reviews), reviews, ProfileViewModel(), rememberNavController())
+        ProfileScreenContent(
+            Author(1, "test", "test", "tester", reviews = reviews),
+            reviews,
+            ProfileViewModel(),
+            rememberNavController()
+        )
     }
 }
 
-class ProfileViewModel: ViewModel() {
+class ProfileViewModel : ViewModel() {
 
     private lateinit var mainVm: MainViewModel
     var hasInit = false
@@ -114,7 +138,6 @@ class ProfileViewModel: ViewModel() {
     }
 
 
-
     val loading = MutableLiveData<Boolean>().apply { value = false }
     val error = MutableLiveData<ApiError>().apply { value = null }
     val reviews = MutableLiveData<List<Review>>()
@@ -122,11 +145,11 @@ class ProfileViewModel: ViewModel() {
 
     fun loadReviews(id: Int) {
         viewModelScope.launch {
-            when(val login = mainVm.repository.login(id)) {
-               is Result.Success -> {
-                   reviews.value = login.data.reviews
-               }
-               is Result.Error -> {
+            when (val login = mainVm.repository.login(id)) {
+                is Result.Success -> {
+                    reviews.value = login.data.reviews
+                }
+                is Result.Error -> {
 
                 }
             }
@@ -134,6 +157,7 @@ class ProfileViewModel: ViewModel() {
 
 
     }
+
     val deleteEvent = MutableLiveData<Event<Boolean>>()
 
 
@@ -145,12 +169,12 @@ class ProfileViewModel: ViewModel() {
                     val newList = reviews.value?.filter {
                         it.id != id
                     }
-                    reviews.value = newList?: emptyList()
+                    reviews.value = newList ?: emptyList()
                     deleteEvent.value = Event(true)
 
                 }
                 is Result.Error -> {
-                 //TODO ERROR
+                    //TODO ERROR
                 }
             }
         }

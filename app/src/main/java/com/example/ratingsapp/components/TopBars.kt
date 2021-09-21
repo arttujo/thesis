@@ -9,7 +9,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.example.ratingsapp.R
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
@@ -17,60 +16,75 @@ import com.example.ratingsapp.ui.theme.RatingsAppTheme
 @Composable
 fun MainTopBar(onLogoutClick: () -> Unit) {
     TopAppBar(
-        title = { Text(text = stringResource(id = R.string.app_name),fontSize = 16.sp) },
+        title = { Text(text = stringResource(id = R.string.app_name), fontSize = 16.sp) },
         backgroundColor = MaterialTheme.colors.primary,
-        elevation =0.dp,
+        elevation = 0.dp,
         contentColor = Color.Black,
         actions = {
             IconButton(onClick = onLogoutClick) {
-                Icon(painter = painterResource(id = R.drawable.ic_logout), contentDescription = stringResource(
-                    id = R.string.logout
-                ),tint = Color.Black )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_logout),
+                    contentDescription = stringResource(
+                        id = R.string.logout
+                    ),
+                    tint = Color.Black
+                )
             }
         }
     )
 }
 
 
-
 @Composable
 fun NoActionTopBar() {
     TopAppBar(
-        title = { Text(text = stringResource(id = R.string.app_name),fontSize = 16.sp) },
+        title = { Text(text = stringResource(id = R.string.app_name), fontSize = 16.sp) },
         backgroundColor = MaterialTheme.colors.primary,
-        elevation =0.dp,
+        elevation = 0.dp,
         contentColor = Color.Black,
     )
 }
 
 @Composable
-fun BackArrowTopBar(navController: NavController, showLike: Boolean = false, likeAction: () -> Unit = {}, hasLiked:Boolean? = null, useX: Boolean = false) {
+fun BackArrowTopBar(
+    navController: NavController,
+    showLike: Boolean = false,
+    likeAction: () -> Unit = {},
+    hasLiked: Boolean? = null,
+    useX: Boolean = false
+) {
 
     /**
      * Use this elsewhere
      */
     var canPop by remember { mutableStateOf(false) }
 
-    navController.addOnDestinationChangedListener{controller, _, _ ->
+    navController.addOnDestinationChangedListener { controller, _, _ ->
         canPop = controller.previousBackStackEntry != null
     }
 
     TopAppBar(
-        title = { Text(text = stringResource(id = R.string.app_name),fontSize = 16.sp) },
+        title = { Text(text = stringResource(id = R.string.app_name), fontSize = 16.sp) },
         backgroundColor = MaterialTheme.colors.primary,
         contentColor = Color.Black,
         navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
-                if(useX) {
-                    Icon(painter = painterResource(id = R.drawable.ic_close), contentDescription = stringResource(
-                        id = R.string.navigate_back
-                    ))
+                if (useX) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_close),
+                        contentDescription = stringResource(
+                            id = R.string.navigate_back
+                        )
+                    )
                 } else {
-                    Icon( painterResource(id = R.drawable.ic_back), contentDescription = stringResource(
-                        id = R.string.navigate_back
-                    ))
+                    Icon(
+                        painterResource(id = R.drawable.ic_back),
+                        contentDescription = stringResource(
+                            id = R.string.navigate_back
+                        )
+                    )
                 }
             }
         },
@@ -78,9 +92,11 @@ fun BackArrowTopBar(navController: NavController, showLike: Boolean = false, lik
             val liked = if (hasLiked == true) R.drawable.ic_liked else R.drawable.ic_like
             if (hasLiked != null) {
                 IconButton(onClick = likeAction) {
-                    Icon(painter = painterResource(liked), contentDescription = stringResource(
-                        id = R.string.like
-                    ),tint = Color.Black )
+                    Icon(
+                        painter = painterResource(liked), contentDescription = stringResource(
+                            id = R.string.like
+                        ), tint = Color.Black
+                    )
                 }
             }
         }
@@ -98,7 +114,7 @@ fun PreviewTop() {
 
 @Preview
 @Composable
-fun NoActionPreview(){
+fun NoActionPreview() {
     RatingsAppTheme {
         NoActionTopBar()
     }
@@ -111,11 +127,12 @@ fun BackButtonTopBar() {
         BackArrowTopBar(rememberNavController())
     }
 }
+
 @Preview
 @Composable
 fun BackButtonTopBarWithLiked() {
     RatingsAppTheme {
-        BackArrowTopBar(rememberNavController(),showLike = true, hasLiked = true)
+        BackArrowTopBar(rememberNavController(), showLike = true, hasLiked = true)
     }
 }
 
@@ -123,6 +140,6 @@ fun BackButtonTopBarWithLiked() {
 @Composable
 fun BackButtonTopBarWithNotLiked() {
     RatingsAppTheme {
-        BackArrowTopBar(rememberNavController(),showLike = true, hasLiked = false)
+        BackArrowTopBar(rememberNavController(), showLike = true, hasLiked = false)
     }
 }

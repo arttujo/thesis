@@ -3,8 +3,6 @@ package com.example.ratingsapp.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -26,18 +24,26 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.ratingsapp.utils.ReviewProvider
+import com.example.ratingsapp.R
 import com.example.ratingsapp.models.Review
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
-import com.example.ratingsapp.R
+import com.example.ratingsapp.utils.ReviewProvider
 
 @PreviewParameter(ReviewProvider::class)
 @Composable
-fun ReviewRow(review: Review, isDelete: Boolean = false, onClick: () -> Unit, onDeleteClick: () -> Unit){
+fun ReviewRow(
+    review: Review,
+    isDelete: Boolean = false,
+    onClick: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
     val deleteWeight = if (isDelete) 0.85F else 1F //
     Row(
         modifier = Modifier
-            .height(80.dp).padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp).fillMaxWidth().clickable { onClick() },
+            .height(80.dp)
+            .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp)
+            .fillMaxWidth()
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
 
     ) {
@@ -47,7 +53,7 @@ fun ReviewRow(review: Review, isDelete: Boolean = false, onClick: () -> Unit, on
             modifier = Modifier.weight(deleteWeight)
         ) {
             ConstraintLayout(modifier = Modifier.fillMaxHeight()) {
-                val (stars,author,likes) = createRefs()
+                val (stars, author, likes) = createRefs()
                 Text(
                     text = review.title,
                     style = MaterialTheme.typography.h5,
@@ -58,7 +64,11 @@ fun ReviewRow(review: Review, isDelete: Boolean = false, onClick: () -> Unit, on
                             top.linkTo(parent.top)
                             end.linkTo(likes.start)
                             width = Dimension.fillToConstraints
-                        },maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Left)
+                        },
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Left
+                )
                 Likes(likes = review.likes, modifier = Modifier.constrainAs(likes) {
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
@@ -77,7 +87,7 @@ fun ReviewRow(review: Review, isDelete: Boolean = false, onClick: () -> Unit, on
 
             }
         }
-        if (isDelete) DeleteButton(onDeleteClick, Modifier.weight(1-deleteWeight))
+        if (isDelete) DeleteButton(onDeleteClick, Modifier.weight(1 - deleteWeight))
     }
 }
 
@@ -89,13 +99,14 @@ fun StaticRating(score: Int, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center){
+        horizontalArrangement = Arrangement.Center
+    ) {
         for (i in 1..5) {
 
             val iconMod = Modifier
                 .width(40.dp)
                 .height(40.dp)
-            if (i<=score) {
+            if (i <= score) {
                 Icon(
                     modifier = iconMod,
                     painter = painterResource(id = R.drawable.ic_star),
@@ -122,9 +133,11 @@ fun Likes(likes: Int, modifier: Modifier) {
     Column(
         modifier = modifier.padding(8.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(text = likes.toString(), style = MaterialTheme.typography.h5)
-        Text(text = stringResource(id = R.string.likes), style = MaterialTheme.typography.body1 )  }
+        Text(text = stringResource(id = R.string.likes), style = MaterialTheme.typography.body1)
+    }
 }
 
 /**
@@ -147,14 +160,14 @@ fun DeleteButton(onClick: () -> Unit, modifier: Modifier) {
     }
 }
 
-fun mockClick(){}
+fun mockClick() {}
 fun mockDelete() {}
 
 @Preview
 @Composable
-fun PreviewRow(@PreviewParameter(ReviewProvider::class) review: Review)  {
+fun PreviewRow(@PreviewParameter(ReviewProvider::class) review: Review) {
     RatingsAppTheme {
-        ReviewRow(review = review,false, { mockClick() }, { mockDelete() })
+        ReviewRow(review = review, false, { mockClick() }, { mockDelete() })
     }
 }
 
@@ -162,6 +175,6 @@ fun PreviewRow(@PreviewParameter(ReviewProvider::class) review: Review)  {
 @Composable
 fun PreviewDeleteRow(@PreviewParameter(ReviewProvider::class) review: Review) {
     RatingsAppTheme {
-        ReviewRow(review = review,true, { mockClick() }, { mockDelete() })
+        ReviewRow(review = review, true, { mockClick() }, { mockDelete() })
     }
 }
