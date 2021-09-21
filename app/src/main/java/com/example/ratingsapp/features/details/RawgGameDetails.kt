@@ -72,7 +72,8 @@ fun RawgGameDetailsScreen(mainViewModel: MainViewModel, navController: NavContro
 
     when(successEvent?.getContentIfNotHandled()) {
         true -> {
-            navController.navigate(createDoneScreen("main", stringResource(id = R.string.game_added)))
+            navController.navigate(createDoneScreen(navDest =
+                "null",infoText = stringResource(id = R.string.game_added)))
         }
         false -> {
             Toast.makeText(LocalContext.current, stringResource(id = R.string.request_failed), Toast.LENGTH_SHORT).show()

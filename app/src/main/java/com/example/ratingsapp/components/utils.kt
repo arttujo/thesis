@@ -259,7 +259,7 @@ fun DoneScreen(navController: NavController, closeDest: String, infoText: String
          */
         Button(onClick = {
             navController.popBackStack("main", false).also {
-                if (it) {
+                if (it && closeDest != "null") {
                     navController.navigate(closeDest)
                 }
             }

@@ -30,6 +30,8 @@ import com.example.ratingsapp.ui.theme.RatingsAppTheme
 import com.example.ratingsapp.utils.Event
 import com.example.ratingsapp.utils.Result
 import com.example.ratingsapp.utils.ReviewListProvider
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 
 
@@ -40,10 +42,11 @@ fun ProfileScreen(mainVm: MainViewModel, navController: NavController) {
     val vm: ProfileViewModel = viewModel()
     if (!vm.hasInit) {
         vm.init(mainVm)
+        if (author != null) {
+            vm.loadReviews(author.id)
+        }
     }
-    if (author != null) {
-        vm.loadReviews(author.id)
-    }
+
 
 
     val reviews by vm.reviews.observeAsState()
@@ -68,21 +71,28 @@ fun ProfileScreen(mainVm: MainViewModel, navController: NavController) {
 
 @Composable
 fun ProfileScreenContent(author: Author, reviews:List<Review>, vm:ProfileViewModel, navController: NavController) {
+    val loading by vm.loading.observeAsState()
+
     ColumnWithDefaultMargin {
         Text(text = author.username, style = MaterialTheme.typography.h3, modifier = Modifier.padding(top = 8.dp))
         Text(text = author.firstname, style = MaterialTheme.typography.h5, modifier = Modifier.padding(top = 16.dp))
         Text(text = author.lastname, style = MaterialTheme.typography.h5, modifier = Modifier.padding(bottom = 16.dp))
-        ReviewList(
-            reviews = reviews,
-            shownInProfile = true,
-            onDeleteClick = { id ->
-                Log.d("DBGL", "Clicked delete on: $id")
-                vm.deleteReview(id)
-            },
-            onRowClick = { id ->
-                navController.navigate("reviewDetails/${id}")
-            }
-        )
+
+        SwipeRefresh( state = rememberSwipeRefreshState(loading == true),
+            onRefresh = { vm.loadReviews(author.id) }) {
+            ReviewList(
+                reviews = reviews,
+                shownInProfile = true,
+                onDeleteClick = { id ->
+                    Log.d("DBGL", "Clicked delete on: $id")
+                    vm.deleteReview(id)
+                },
+                onRowClick = { id ->
+                    navController.navigate("reviewDetails/${id}")
+                }
+            )
+        }
+
     }
 }
 

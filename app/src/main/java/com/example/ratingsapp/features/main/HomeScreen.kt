@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -39,6 +40,8 @@ import com.example.ratingsapp.utils.GameListProvider
 import com.example.ratingsapp.utils.ReloadSnackBar
 import com.example.ratingsapp.utils.Result
 import com.example.ratingsapp.utils.ReviewProvider
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
@@ -50,16 +53,20 @@ fun HomeScreen(mainVm:MainViewModel, navController: NavController) {
         vm.init(mainVm)
     }
     val games = vm.games.observeAsState()
-    val loading = vm.loading.observeAsState()
+    val loading by vm.loading.observeAsState()
     val error = vm.error.observeAsState()
 
 
+
     ColumnWithDefaultMargin {
-        if (loading.value == true) {
+        if (loading == true) {
             LoadingOverlay()
         }
         else {
-            HomeGameList(games = games.value?: emptyList(),navController)
+            SwipeRefresh( state = rememberSwipeRefreshState(loading == true),
+                onRefresh = { vm.load() }) {
+                HomeGameList(games = games.value?: emptyList(),navController)
+            }
             if (error.value != null) {
                 ReloadSnackBar {
                     vm.load()
