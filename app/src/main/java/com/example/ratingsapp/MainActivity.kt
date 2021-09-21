@@ -201,7 +201,7 @@ class ViewModelFactory(private val apiHelper: ApiHelper, private val dataStore: 
 fun MainScreen(navController: NavHostController, mainVm: MainViewModel) {
     val home = TabItem(R.drawable.ic_home,R.string.home, mainVm) { HomeScreen(mainVm, navController) }
     val search = TabItem(R.drawable.ic_search, R.string.search,mainVm) { SearchScreen(mainVm, navController)}
-    val profile = TabItem(R.drawable.ic_profile, R.string.profile, mainVm) { ProfileScreen(mainVm)}
+    val profile = TabItem(R.drawable.ic_profile, R.string.profile, mainVm) { ProfileScreen(mainVm, navController)}
     val tabs = listOf(home,search,profile)
     val pagerState = rememberPagerState(pageCount = tabs.size)
 

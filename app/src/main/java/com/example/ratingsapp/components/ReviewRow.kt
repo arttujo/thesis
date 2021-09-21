@@ -49,7 +49,7 @@ fun ReviewRow(review: Review, isDelete: Boolean = false, onClick: () -> Unit, on
             ConstraintLayout(modifier = Modifier.fillMaxHeight()) {
                 val (stars,author,likes) = createRefs()
                 Text(
-                    text = stringResource(id = R.string.review_by, review.authorUsername),
+                    text = review.title,
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier
                         .padding(start = 8.dp, top = 4.dp)

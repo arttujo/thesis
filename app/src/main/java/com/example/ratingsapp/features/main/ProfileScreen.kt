@@ -18,6 +18,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.ratingsapp.R
 import com.example.ratingsapp.components.ColumnWithDefaultMargin
 import com.example.ratingsapp.components.ReviewList
@@ -32,22 +34,23 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun ProfileScreen(mainVm: MainViewModel) {
+fun ProfileScreen(mainVm: MainViewModel, navController: NavController) {
     val author = mainVm.loggedInAs.value
 
     val vm: ProfileViewModel = viewModel()
     if (!vm.hasInit) {
         vm.init(mainVm)
-        if (author != null) {
-            vm.loadReviews(author.id)
-        }
     }
+    if (author != null) {
+        vm.loadReviews(author.id)
+    }
+
 
     val reviews by vm.reviews.observeAsState()
     val deleteEvent by vm.deleteEvent.observeAsState()
 
     if (author != null) {
-        ProfileScreenContent(author = author, reviews = reviews ?: emptyList(), vm)
+        ProfileScreenContent(author = author, reviews = reviews ?: emptyList(), vm, navController)
     } else {
         //TODO ERROR
     }
@@ -64,7 +67,7 @@ fun ProfileScreen(mainVm: MainViewModel) {
 
 
 @Composable
-fun ProfileScreenContent(author: Author, reviews:List<Review>, vm:ProfileViewModel) {
+fun ProfileScreenContent(author: Author, reviews:List<Review>, vm:ProfileViewModel, navController: NavController) {
     ColumnWithDefaultMargin {
         Text(text = author.username, style = MaterialTheme.typography.h3, modifier = Modifier.padding(top = 8.dp))
         Text(text = author.firstname, style = MaterialTheme.typography.h5, modifier = Modifier.padding(top = 16.dp))
@@ -77,7 +80,7 @@ fun ProfileScreenContent(author: Author, reviews:List<Review>, vm:ProfileViewMod
                 vm.deleteReview(id)
             },
             onRowClick = { id ->
-
+                navController.navigate("reviewDetails/${id}")
             }
         )
     }
@@ -87,7 +90,7 @@ fun ProfileScreenContent(author: Author, reviews:List<Review>, vm:ProfileViewMod
 @Composable
 fun ProfilePreview(@PreviewParameter(ReviewListProvider::class) reviews: List<Review>){
     RatingsAppTheme {
-        ProfileScreenContent(Author(1, "test","test","tester", reviews = reviews), reviews, ProfileViewModel())
+        ProfileScreenContent(Author(1, "test","test","tester", reviews = reviews), reviews, ProfileViewModel(), rememberNavController())
     }
 }
 

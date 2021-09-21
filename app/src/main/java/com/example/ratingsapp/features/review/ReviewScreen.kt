@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -68,11 +69,10 @@ fun ReviewScreenContent(review: Review, vm: ReviewViewModel) {
     ColumnWithDefaultMargin {
         LazyColumn() {
             item {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = stringResource(id = R.string.review_by, review.authorUsername), style = MaterialTheme.typography.h4)
+                Column() {
+                    Text(text = review.title, style = MaterialTheme.typography.h4,maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(
                         text = stringResource(id = R.string.likes_num,review.likes.toString()),
-                        modifier = Modifier.fillMaxWidth(), // hacky way to align text to the end of the row
                         textAlign = TextAlign.Right)
                 }
             }
@@ -82,10 +82,11 @@ fun ReviewScreenContent(review: Review, vm: ReviewViewModel) {
             }
             item {
                 StaticRating(score = review.reviewScore, )
+                Text(text = stringResource(id = R.string.review_by, review.authorUsername), style = MaterialTheme.typography.caption)
             }
 
             item {
-                Text(text = stringResource(id = R.string.comments_title), style = MaterialTheme.typography.h4)
+                Text(text = stringResource(id = R.string.comments_title), style = MaterialTheme.typography.h4, modifier = Modifier.padding(top = 16.dp))
                 LimitedTextInput(
                     charLimit = 25,
                     hint = stringResource(id = R.string.leave_comment),
