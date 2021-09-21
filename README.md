@@ -11,6 +11,7 @@ Known Issues:
 - Because of poor choises regarding ViewModel/Repo implementation, implementing automatic reloads for some data would have required major refactoring. Implemented swipe to refresh for Home list and profile review list to mitigate this.
 - In most cases error handling was left out 
 - Didn't implement load more feature for the Rawg.Io api 
+- Didn't implement liking feature since it would be a b**** to implement while using Json Server 
 
 
 In case the main API (ran on a personal server from home) for the app is down and there's a logged in user DataStore the home page will show an error with the API error
