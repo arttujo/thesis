@@ -28,6 +28,7 @@ import com.example.ratingsapp.R
 import com.example.ratingsapp.components.BackArrowTopBar
 import com.example.ratingsapp.components.ColumnWithDefaultMargin
 import com.example.ratingsapp.components.LoadingOverlay
+import com.example.ratingsapp.components.StaticRating
 import com.example.ratingsapp.features.main.MainViewModel
 import com.example.ratingsapp.models.RawgBaseResponse
 import com.example.ratingsapp.models.RawgGameDetails
@@ -35,6 +36,7 @@ import com.example.ratingsapp.repositories.ApiError
 import com.example.ratingsapp.ui.theme.RatingsAppTheme
 import com.example.ratingsapp.utils.Result
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 
 @Composable
@@ -47,7 +49,7 @@ fun RawgGameDetailsScreen(mainViewModel: MainViewModel, navController: NavContro
 
     val loading by vm.loading.observeAsState()
 
-    Scaffold(topBar = { BackArrowTopBar(navController)}) {
+    Scaffold(topBar = { BackArrowTopBar(navController, useX = true)}) {
         if (loading==true) {
             LoadingOverlay()
         } else {
@@ -88,6 +90,8 @@ fun RawgGameDetailsContent(vm: RawgGameDetailsViewModel) {
             InfoRow(title = stringResource(id = R.string.game_title), value = game?.name!!)
             InfoRow(title = stringResource(id = R.string.game_developers), value = game?.developers!!.joinToString { it.name })
             InfoRow(title = stringResource(id = R.string.game_description), value = Html.fromHtml(game?.description!!).toString())
+            Text(text = "${stringResource(id = R.string.score)}:", style = MaterialTheme.typography.h6)
+            StaticRating(score = game?.rating?.roundToInt()!!)
         }
         
     }

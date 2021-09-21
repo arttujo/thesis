@@ -57,7 +57,8 @@ fun GameDetailsScreen(mainViewModel: MainViewModel, navController: NavController
                 navController = navController,
                 showLike = true,
                 likeAction = {},
-                hasLiked = hasLiked ?: false
+                hasLiked = hasLiked ?: false,
+                useX = true
             )
         },
         floatingActionButton = {

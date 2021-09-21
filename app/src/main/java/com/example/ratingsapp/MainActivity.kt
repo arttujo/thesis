@@ -7,6 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
@@ -23,7 +27,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.example.ratingsapp.api.ApiHelper
@@ -49,6 +52,9 @@ import com.example.ratingsapp.features.details.RawgGameDetailsScreen
 import com.example.ratingsapp.features.review.NewReviewScreen
 import com.example.ratingsapp.features.review.ReviewScreen
 import com.example.ratingsapp.repositories.RawgRepository
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 
 const val GAME_ID = "GAME_ID"
@@ -64,7 +70,7 @@ const val INFO_TEXT = "INFO_TEXT"
 @ExperimentalAnimationApi
 @Composable
 fun ApplicationRoot(mainVm: MainViewModel) {
-    val navController = rememberNavController()
+    val navController = rememberAnimatedNavController()
 
     val login = mainVm.loggedInAs.observeAsState()
 
@@ -75,22 +81,55 @@ fun ApplicationRoot(mainVm: MainViewModel) {
         if (login.value != null) {
             startDestination.value = "main"
         }
-        NavHost(navController = navController , startDestination = startDestination.value ) {
+        AnimatedNavHost(navController = navController , startDestination = startDestination.value ) {
             composable("login") { LoginScreen(navController, mainVm)}
             composable("register") { RegisterScreen(navController, mainVm) }
             composable("main") { MainScreen(navController,mainVm)}
-            composable("gameDetails/{$GAME_ID}", arguments = listOf(navArgument(GAME_ID) {type = NavType.IntType }) ) {
+
+
+            composable(
+                enterTransition = { _, _ ->
+                    slideInVertically(initialOffsetY = {3000}, animationSpec = tween(200))
+                },
+                popEnterTransition = {_,_ ->
+                    slideInHorizontally(initialOffsetX = {-1000}, animationSpec = tween(200))
+                },
+
+                popExitTransition = {_, _ ->
+                    slideOutVertically(targetOffsetY = {3000}, animationSpec = tween(200))
+                },
+                route = "gameDetails/{$GAME_ID}",
+                arguments = listOf(navArgument(GAME_ID) {type = NavType.IntType }) ) {
                 GameDetailsScreen(mainViewModel = mainVm, navController = navController, gameId = it.arguments?.getInt(GAME_ID))
             }
 
-            composable("rawgGameDetails/{$GAME_ID}", arguments = listOf(navArgument(GAME_ID) { type = NavType.IntType }) ) {
+            composable(
+                enterTransition = { _, _ ->
+                    slideInVertically(initialOffsetY = {1000}, animationSpec = tween(200))
+                },
+
+                exitTransition = {_, _ ->
+                    slideOutVertically(targetOffsetY = {5000}, animationSpec = tween(200))
+                },
+                route ="rawgGameDetails/{$GAME_ID}",
+                arguments = listOf(navArgument(GAME_ID) { type = NavType.IntType }) ) {
                 RawgGameDetailsScreen(mainViewModel = mainVm, navController = navController, gameId = it.arguments?.getInt(GAME_ID))
             }
 
-            composable("reviewDetails/{$REVIEW_ID}", arguments = listOf(navArgument(REVIEW_ID) {type = NavType.IntType})) {
+            composable(
+                enterTransition = { _, _ ->
+                    slideInHorizontally(initialOffsetX = {1000}, animationSpec = tween(200))
+                },
+                route = "reviewDetails/{$REVIEW_ID}",
+                arguments = listOf(navArgument(REVIEW_ID) {type = NavType.IntType})) {
                 ReviewScreen(mainViewModel = mainVm, navController = navController, reviewId = it.arguments?.getInt(REVIEW_ID))
             }
-            composable("newReview/{$GAME_ID}", arguments = listOf(navArgument(GAME_ID) {type = NavType.IntType})) {
+            composable(
+                enterTransition = { _, _ ->
+                    slideInHorizontally(initialOffsetX = {1000}, animationSpec = tween(200))
+                },
+                route ="newReview/{$GAME_ID}",
+                arguments = listOf(navArgument(GAME_ID) {type = NavType.IntType})) {
                 NewReviewScreen(mainViewModel = mainVm, navController = navController, gameId = it.arguments?.getInt(GAME_ID))
             }
             composable("done?navDest={$NAV_DEST}&infoText={$INFO_TEXT}",arguments = listOf(

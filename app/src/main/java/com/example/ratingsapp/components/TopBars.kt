@@ -44,7 +44,7 @@ fun NoActionTopBar() {
 }
 
 @Composable
-fun BackArrowTopBar(navController: NavController, showLike: Boolean = false, likeAction: () -> Unit = {}, hasLiked:Boolean? = null) {
+fun BackArrowTopBar(navController: NavController, showLike: Boolean = false, likeAction: () -> Unit = {}, hasLiked:Boolean? = null, useX: Boolean = false) {
 
     /**
      * Use this elsewhere
@@ -63,9 +63,15 @@ fun BackArrowTopBar(navController: NavController, showLike: Boolean = false, lik
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
-                Icon( painterResource(id = R.drawable.ic_back), contentDescription = stringResource(
-                    id = R.string.navigate_back
-                ))
+                if(useX) {
+                    Icon(painter = painterResource(id = R.drawable.ic_close), contentDescription = stringResource(
+                        id = R.string.navigate_back
+                    ))
+                } else {
+                    Icon( painterResource(id = R.drawable.ic_back), contentDescription = stringResource(
+                        id = R.string.navigate_back
+                    ))
+                }
             }
         },
         actions = {

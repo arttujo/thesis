@@ -83,7 +83,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager:0.14.0" // Pager
     implementation "com.google.accompanist:accompanist-pager-indicators:0.14.0" // Pager Indicators
     implementation("io.coil-kt:coil-compose:1.3.1")
-
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.18.0"
 
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
@@ -121,6 +121,8 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 
     implementation 'com.airbnb.android:lottie-compose:4.1.0'
+
+
 
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
