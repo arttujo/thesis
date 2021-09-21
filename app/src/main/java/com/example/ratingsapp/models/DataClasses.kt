@@ -82,7 +82,7 @@ data class Comment(
 data class AuthorCreator(val username: String, val firstname: String, val lastname: String, val likedGames: List<Int> = emptyList(), val likedReviews: List<Int> = emptyList(), val likedComments: List<Int> = emptyList() )
 data class CommentCreator(val reviewId: Int, val author: String, val authorId: Int, val comment: String, val likes: Int = 0)
 data class ReviewCreator(val authorUsername: String, val authorId: Int, val gameId: Int, val body: String, val title: String, val reviewScore: Int,val likes: Int = 0 )
-
+data class GameCreator(val title: String, val studio: String, val imageLink: String, val likes: Int = 0)
 /**
  * RAWG.IO Model for games
  */

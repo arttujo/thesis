@@ -12,7 +12,11 @@ import retrofit2.http.*
 
 interface JsonApiService {
     @GET("games")
-    suspend fun getGames(): Response<List<Game>>
+    suspend fun getGames(@Query("q") search: String? = null) : Response<List<Game>>
+
+    @POST("games")
+    suspend fun postGame(@Body request: GameCreator): Response<Game>
+
 
     @GET("authors")
     suspend fun getAuthors(): Response<List<Author>>
@@ -64,8 +68,10 @@ object RetrofitBuilder {
 }
 
 class ApiHelper(private val apiService: JsonApiService) {
-    suspend fun getGames() = apiService.getGames()
+    suspend fun getGames(query: String?) = apiService.getGames(query)
     suspend fun getGameDetails(gameId: Int) = apiService.getGameDetails(gameId)
+
+    suspend fun postGame(game: GameCreator) = apiService.postGame(game)
 
     suspend fun getAuthors() = apiService.getAuthors()
     suspend fun login(id:Int) = apiService.login(id)

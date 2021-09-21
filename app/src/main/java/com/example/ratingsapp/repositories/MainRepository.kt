@@ -40,9 +40,9 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
         this.cache[key] = value
     }
 
-    suspend fun getGames(): Result<List<Game>> = withContext(Dispatchers.IO) {
+    suspend fun getGames(query: String? = null): Result<List<Game>> = withContext(Dispatchers.IO) {
         try {
-            val response = apiHelper.getGames()
+            val response = apiHelper.getGames(query)
             if (response.isSuccessful) {
                 set(GAME_CACHE_KEY, response.body()!!)
                 return@withContext Result.Success(response.body()!!)
@@ -50,6 +50,19 @@ class MainRepository(private val apiHelper: ApiHelper):Cache {
                 return@withContext Result.Error(ApiError(response.code(),response.message()))
             }
         } catch (e:Exception) {
+            return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
+        }
+    }
+
+    suspend fun postAuthors(creator: GameCreator): Result<Game> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiHelper.postGame(creator)
+            if (response.isSuccessful) {
+                return@withContext Result.Success(response.body()!!)
+            } else {
+                return@withContext Result.Error(ApiError(response.code(),response.message()))
+            }
+        } catch (e: Exception) {
             return@withContext Result.Error(ApiError(-1, e.message ?: "Unknown Exception"))
         }
     }

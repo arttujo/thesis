@@ -51,6 +51,12 @@
 
     <string name="score">Score</string>
 
+    <string name="add_to_ratings">Add to be rated</string>
+    <string name="Cannot_add">Cannot add game. Already added</string>
+    <string name="game_added">Game was added!</string>
+
+    <string name="request_failed">Request Failed</string>
+
     <string name="data_fetch_error">Fetching Data Failed!</string>
     <string name="successful_delete">Deleted Review!</string>
     <string name="reload">Reload</string>
